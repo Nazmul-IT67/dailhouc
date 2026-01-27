@@ -33,6 +33,12 @@ class DatabaseSeeder extends Seeder
             InteriorColorSeeder::class,
             VehicleReferenceSeeder::class,
             BedTypeAndCountSeeder::class,
+            BodyTypeSeeder::class,
+            FuelSeeder::class,
+            EquipmentSeeder::class,
+            PowerSeeder::class,
+            EquipmentLineSeeder::class,
+            SellerTypeSeeder::class,
             VehicleSeeder::class,
         ]);
 

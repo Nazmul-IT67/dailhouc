@@ -4,36 +4,43 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class CategorySeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         $now = Carbon::now();
 
-        // 1. Define Categories (English as default or base)
         $categories = [
-            ['id' => 1, 'name' => 'Car', 'created_at' => $now, 'updated_at' => $now],
-            ['id' => 2, 'name' => 'Motorbike', 'created_at' => $now, 'updated_at' => $now],
-            ['id' => 3, 'name' => 'Caravan', 'created_at' => $now, 'updated_at' => $now],
-            ['id' => 4, 'name' => 'Transporter', 'created_at' => $now, 'updated_at' => $now],
-            ['id' => 5, 'name' => 'Trail', 'created_at' => $now, 'updated_at' => $now],
+            ['en' => 'Car', 'fr' => 'Voiture'],
+            ['en' => 'Motorbike', 'fr' => 'Moto'],
+            ['en' => 'Caravan', 'fr' => 'Caravane'],
+            ['en' => 'Transporter', 'fr' => 'Transporteur'],
+            ['en' => 'Trail', 'fr' => 'Piste'],
         ];
 
-        DB::table('categories')->insert($categories);
+        foreach ($categories as $cat) {
+            $categoryId = DB::table('categories')->insertGetId([
+                'name' => $cat['en'],
+            ]);
 
-        // 2. Define French Translations
-        // ধরি আপনার ল্যাঙ্গুয়েজ কলামে 'fr' বসবে
-        $translations = [
-            ['category_id' => 1, 'language' => 'fr', 'name' => 'Voiture', 'created_at' => $now, 'updated_at' => $now],
-            ['category_id' => 2, 'language' => 'fr', 'name' => 'Moto', 'created_at' => $now, 'updated_at' => $now],
-            ['category_id' => 3, 'language' => 'fr', 'name' => 'Caravane', 'created_at' => $now, 'updated_at' => $now],
-            ['category_id' => 4, 'language' => 'fr', 'name' => 'Transporteur', 'created_at' => $now, 'updated_at' => $now],
-            ['category_id' => 5, 'language' => 'fr', 'name' => 'Piste', 'created_at' => $now, 'updated_at' => $now],
-        ];
-
-        // ধরি আপনার ট্রান্সলেশন টেবিলের নাম 'category_translations'
-        DB::table('category_translations')->insert($translations);
+            DB::table('category_translations')->insert([
+                [
+                    'category_id' => $categoryId,
+                    'language' => 'en',
+                    'name' => $cat['en'],
+                ],
+                [
+                    'category_id' => $categoryId,
+                    'language' => 'fr',
+                    'name' => $cat['fr'],
+                ],
+            ]);
+        }
     }
 }

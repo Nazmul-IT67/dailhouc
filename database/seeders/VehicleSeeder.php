@@ -16,7 +16,7 @@ class VehicleSeeder extends Seeder
                 'category_id'         => 1,
                 'brand_id'            => 2,
                 'model_id'            => 4,
-                'sub_model_id'        => 5,
+                'sub_model_id'        => 2,
                 'first_registration'  => '2023-01-15',
                 'body_type_id'        => 1,
                 'fuel_id'             => 1,

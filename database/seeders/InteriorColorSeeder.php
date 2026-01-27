@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\InteriorColor;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class InteriorColorSeeder extends Seeder
 {
@@ -14,38 +13,36 @@ class InteriorColorSeeder extends Seeder
      */
     public function run(): void
     {
-        // Purono data clear kora (Optional)
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        InteriorColor::truncate();
-        DB::table('interior_color_translations')->truncate();
+        DB::table('interior_colors')->truncate();
+        
+        if (Schema::hasTable('interior_color_translations')) {
+            DB::table('interior_color_translations')->truncate();
+        }
+        
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $now = Carbon::now();
-
         $colors = [
-            ['en' => 'Black', 'fr' => 'Noir',  'code' => '#000000'],
+            ['en' => 'Black', 'fr' => 'Noir', 'code' => '#000000'],
             ['en' => 'Beige', 'fr' => 'Beige', 'code' => '#F5F5DC'],
+            ['en' => 'Grey', 'fr' => 'Gris', 'code' => '#808080'],
             ['en' => 'Brown', 'fr' => 'Marron', 'code' => '#A52A2A'],
-            ['en' => 'Gray',  'fr' => 'Gris',   'code' => '#808080'],
-            ['en' => 'Red',   'fr' => 'Rouge',  'code' => '#FF0000'],
-            ['en' => 'White', 'fr' => 'Blanc',  'code' => '#FFFFFF'],
+            ['en' => 'Red', 'fr' => 'Rouge', 'code' => '#FF0000'],
+            ['en' => 'White', 'fr' => 'Blanc', 'code' => '#FFFFFF'],
+            ['en' => 'Tan', 'fr' => 'Tanné', 'code' => '#D2B48C'],
+            ['en' => 'Other', 'fr' => 'Autre', 'code' => null],
         ];
 
-        foreach ($colors as $color) {
-            // 1. Main InteriorColor Table-e insert
-            $newColor = InteriorColor::create([
-                'name'       => $color['en'],
-                'color_code' => $color['code'],
+        foreach ($colors as $colorData) {
+            $colorId = DB::table('interior_colors')->insertGetId([
+                'name'       => $colorData['en'],
+                'color_code' => $colorData['code']
             ]);
 
-            // 2. Translation Table-e French data insert
-            // Table name: interior_color_translations, FK: interior_color_id
             DB::table('interior_color_translations')->insert([
-                'interior_color_id' => $newColor->id,
+                'interior_color_id' => $colorId,
                 'language'          => 'fr',
-                'name'              => $color['fr'],
-                'created_at'        => $now,
-                'updated_at'        => $now,
+                'name'             => $colorData['fr']
             ]);
         }
     }

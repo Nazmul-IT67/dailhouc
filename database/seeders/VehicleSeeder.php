@@ -13,10 +13,10 @@ class VehicleSeeder extends Seeder
         for ($i = 1; $i <= 5; $i++) {
             Vehicle::create([
                 'engine_displacement' => '2.0L Turbo',
-                'category_id'         => 1,
-                'brand_id'            => 2,
-                'model_id'            => 4,
-                'sub_model_id'        => 2,
+                'category_id'         => $i,
+                'brand_id'            => $i,
+                'model_id'            => $i,
+                'sub_model_id'        => $i,
                 'first_registration'  => '2023-01-15',
                 'body_type_id'        => 1,
                 'fuel_id'             => 1,

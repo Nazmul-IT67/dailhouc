@@ -143,6 +143,7 @@ class VehicleController extends Controller
         return $this->success($models, 'Models fetched successfully', 200);
     }
 
+    // getSubModelsByModel
     public function getSubModelsByModel(Request $request)
     {
         $car_model_id = $request->car_model_id;
@@ -186,36 +187,6 @@ class VehicleController extends Controller
     }
 
     // getModelsWithSubModelsByBrand
-    // public function getModelsWithSubModelsByBrand(Request $request)
-    // {
-    //     $brand_id = $request->brand_id;
-
-    //     if (!$brand_id) {
-    //         return $this->error([], 'Brand ID is required', 400);
-    //     }
-
-    //     // Check if brand exists
-    //     $brand = Brand::find($brand_id);
-    //     if (!$brand) {
-    //         return $this->error([], 'Brand not found', 404);
-    //     }
-
-    //     // Fetch all models with their submodels and vehicles count
-    //     $models = CarModel::with([
-    //             'subModels' => function ($q) {
-    //                 $q->withCount('vehicles'); // submodel vehicles count
-    //             }
-    //         ])
-    //         ->withCount('vehicles') // model vehicles count
-    //         ->where('brand_id', $brand_id)
-    //         ->get();
-
-    //     if ($models->isEmpty()) {
-    //         return $this->success([], 'No Models or SubModels for this Brand', 200);
-    //     }
-
-    //     return $this->success($models, 'Models and SubModels fetched successfully', 200);
-    // }
     public function getModelsWithSubModelsByBrand(Request $request)
     {
         $brand_id = $request->brand_id;
@@ -270,6 +241,7 @@ class VehicleController extends Controller
 
         return $this->success($models, 'Models and SubModels fetched successfully', 200);
     }
+
     // getVehicleConditions
     public function getVehicleConditions(Request $request)
     {
@@ -768,41 +740,55 @@ class VehicleController extends Controller
     public function getFavoriteVehicles(Request $request)
     {
         $user = Auth::user();
+        $lang = $request->query('language');
+
         if (!$user) {
-            return $this->error([], 'Unauthenticated. Please log in to access your vehicles.', 200);
+            return $this->error([], 'Unauthenticated.', 200);
         }
 
-        // Fetch favorite vehicles with all relationships
-        $vehicles = Vehicle::with([
-            'data.condition',
-            'data.bodyColor',
-            'data.upholstery',
-            'data.interiorColor',
-            'data.previousOwner',
-            'data.numOfDoor',
-            'data.numOfSeats',
-            'photos',
-            'engineAndEnvironment.driverType',
-            'engineAndEnvironment.transmission',
-            'engineAndEnvironment.numOfGears',
-            'engineAndEnvironment.cylinders',
-            'engineAndEnvironment.emissionClass',
-            'conditionAndMaintenance',
-            'category',
-            'brand',
-            'model',
-            'fuel',
-            'body_type',
-            'transmission',
-            'power',
-            'equipment_line',
-            'seller_type',
-        ])
-            ->whereHas('favoritedBy', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
+        $withTr = function($q) use ($lang) {
+            if ($lang) {
+                $q->with(['translations' => fn($t) => $t->where('language', $lang)]);
+            }
+        };
+
+        $vehicles = Vehicle::whereHas('favoritedBy', function($q) use ($user) {
+                $q->where('user_id', $user->id);
             })
+            ->with([
+                'category' => $withTr, 'brand' => $withTr, 'model' => $withTr, 
+                'subModel' => $withTr, 'photos', 'power', 'currency', 'baseCurrency',
+                'contactInfo.country', 'contactInfo.city', 'data.condition',
+                'user' => function($q) use ($withTr) {
+                    $q->with(['country' => $withTr, 'city' => $withTr]);
+                }
+            ])
+            ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            }])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+
+        $vehicles->getCollection()->transform(function ($v) use ($lang) {
+            $v->is_favorite = (bool) $v->is_favorite;
+
+            if ($v->contactInfo) {
+                $v->contactInfo->country_name = $v->contactInfo->country?->name;
+                $v->contactInfo->city_name = $v->contactInfo->city?->name;
+                $v->contactInfo->makeHidden(['country', 'city']);
+            }
+
+            if ($lang) {
+                $rels = ['category', 'brand', 'model', 'subModel', 'fuel', 'body_type', 'transmission'];
+                foreach ($rels as $rel) {
+                    if ($v->$rel && $v->$rel->translations->isNotEmpty()) {
+                        $v->$rel->name = $v->$rel->translations->first()->name ?? $v->$rel->translations->first()->title;
+                        $v->$rel->makeHidden('translations');
+                    }
+                }
+            }
+            return $v;
+        });
 
         return $this->success($vehicles, 'Favorite vehicles fetched successfully', 200);
     }

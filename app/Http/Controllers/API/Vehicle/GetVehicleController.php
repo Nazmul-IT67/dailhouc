@@ -32,7 +32,7 @@ class GetVehicleController extends Controller
             'vehicles.base_currency_id', 'vehicles.first_registration'
         )
         ->with([
-            'power', 'category' => $withTranslation, 'brand' => $withTranslation,  'model' => $withTranslation, 'subModel' => $withTranslation, 'body_type' => $withTranslation, 'data.condition' => $withTranslation, 'photos', 'contactInfo', 'currency', 'baseCurrency'
+            'power', 'category' => $withTranslation, 'brand' => $withTranslation,  'model' => $withTranslation, 'subModel' => $withTranslation, 'body_type' => $withTranslation, 'data.condition' => $withTranslation, 'photos', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'currency', 'baseCurrency'
         ])->where('status', 1)->orderBy('created_at', 'desc')->paginate(20);
 
         $baseCurrency = Currency::where('is_default', 1)->first() ?? Currency::where('code', 'USD')->first();
@@ -204,7 +204,7 @@ class GetVehicleController extends Controller
             'transmission' => $withTranslation,
             'equipment_line' => $withTranslation,
             'seller_type' => $withTranslation,
-            'currency', 'baseCurrency', 'user'
+            'currency', 'baseCurrency'
         ])->find($vehicleId);
 
         if (!$vehicle) {
@@ -261,8 +261,8 @@ class GetVehicleController extends Controller
                 'avatar' => $contact->avatar ?? null,
                 'whatsapp_number' => $contact->is_whatsapp_show ? $contact->whatsapp_number : null,
                 'whatsapp_country_code' => $contact->is_whatsapp_show ? $contact->whatsapp_country_code : null,
-                'country_id' => $contact->country_id,
-                'city_id' => $contact->city_id,
+                'country' => $contact->country?->name,
+                'city' => $contact->city?->name,
                 'postal_code' => $contact->postal_code,
                 'street_details' => $contact->street_details,
                 'lat' => $contact->lat,
@@ -291,13 +291,17 @@ class GetVehicleController extends Controller
     // getPendingAndAllVehicle
     public function getPendingAndAllVehicle(Request $request)
     {
+        $user = auth('sanctum')->user();
         $lang = $request->query('language');
         $withTr = fn($q) => $lang ? $q->with(['translations' => fn($t) => $t->where('language', $lang)]) : null;
 
         $vehicles = Vehicle::with([
             'category' => $withTr, 'brand' => $withTr, 'model' => $withTr,
-            'subModel' => $withTr, 'power', 'photos', 'currency', 'baseCurrency'
+            'subModel' => $withTr, 'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition'
         ])
+        ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
+            $q->where('user_id', $user?->id);
+        }])
         ->whereIn('status', [0, 1])
         ->latest()
         ->paginate(20);
@@ -357,6 +361,7 @@ class GetVehicleController extends Controller
     // getfeatured
     public function featured(Request $request)
     {
+        $user = auth('sanctum')->user();
         $lang = $request->query('language');
         $withTr = function ($q) use ($lang) {
             if ($lang) {
@@ -369,8 +374,11 @@ class GetVehicleController extends Controller
             'brand' => $withTr,
             'model' => $withTr,
             'subModel' => $withTr,
-            'power', 'photos', 'currency', 'baseCurrency'
+            'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition'
         ])
+        ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
+            $q->where('user_id', $user?->id);
+        }])
         ->where('is_featured', 1)
         ->where('status', 1)
         ->latest()

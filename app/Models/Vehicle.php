@@ -29,6 +29,7 @@ class Vehicle extends Model
     {
         return $this->belongsTo(CarModel::class);
     }
+
     public function subModel()
     {
         return $this->belongsTo(SubModel::class);
@@ -38,14 +39,17 @@ class Vehicle extends Model
     {
         return $this->belongsTo(Fuel::class);
     }
+
     public function body_type()
     {
         return $this->belongsTo(BodyType::class);
     }
+
     public function transmission()
     {
         return $this->belongsTo(Transmission::class);
     }
+    
     public function power()
     {
         return $this->belongsTo(Power::class, 'power_id', 'id');
@@ -110,6 +114,7 @@ class Vehicle extends Model
     {
         return $this->hasOne(ContactInfo::class);
     }
+    
     public function currency()
     {
         return $this->belongsTo(Currency::class, 'currency_id');

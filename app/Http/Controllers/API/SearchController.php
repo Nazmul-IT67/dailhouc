@@ -18,13 +18,15 @@ use Illuminate\Support\Facades\DB;
 class SearchController extends Controller
 {
     use ApiResponse;
+
+    // index
     public function index(Request $request)
     {
-        // $query = Vehicle::with(['brand', 'category', 'model', 'subModel', 'data', 'contactInfo', 'photos', 'engineAndEnvironment', 'conditionAndMaintenance']);
         $query = Vehicle::select(
             'vehicles.id',
             'vehicles.category_id',
             'vehicles.brand_id',
+            'vehicles.user_id',
             'vehicles.model_id',
             'vehicles.body_type_id',
             'vehicles.sub_model_id',
@@ -33,7 +35,7 @@ class SearchController extends Controller
             'vehicles.milage',
             'vehicles.engine_displacement',
             'vehicles.first_registration'
-        )->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo', 'power', 'data.condition']);
+        )->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition']);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -128,8 +130,6 @@ class SearchController extends Controller
                 });
             }
         );
-
-
 
         if ($request->filled('first_registration_from') && $request->filled('first_registration_to')) {
             $query->whereBetween('first_registration', [$request->first_registration_from, $request->first_registration_to]);
@@ -384,13 +384,12 @@ class SearchController extends Controller
 
         if ($user = auth('sanctum')->user()) {
 
-            // ১. একটি ইন্টারনাল ফাংশন যা অ্যারের ভেতর পর্যন্ত ক্লিন করবে
             $cleanArray = function ($array) use (&$cleanArray) {
                 foreach ($array as $key => &$value) {
                     if (is_array($value)) {
-                        $value = $cleanArray($value); // অ্যারের ভেতর আবার চেক করবে
+                        $value = $cleanArray($value);
                     }
-                    // যদি ভ্যালু null, খালি অ্যারে [], অথবা খালি স্ট্রিং হয় তবে তা রিমুভ করো
+
                     if (is_null($value) || (is_array($value) && empty($value)) || $value === '') {
                         unset($array[$key]);
                     }
@@ -441,10 +440,9 @@ class SearchController extends Controller
                 ]
             ];
 
-            // ২. ডেটাবেসে ক্লিন করা ফিল্টারটি সেভ করুন
             UserSearchLog::create([
                 'user_id'       => $user->id,
-                'filters'       => $cleanArray($logFilters), // এখানে ক্লিন ফাংশনটি কল করা হয়েছে
+                'filters'       => $cleanArray($logFilters),
                 'results_count' => $vehicles->total(),
                 'ip_address'    => $request->ip(),
             ]);
@@ -530,7 +528,7 @@ class SearchController extends Controller
 
             'bed_type' => $bedTypeNames ?? null,
 
-            // ✅ Request value precedence
+            // Request value precedence
             'axle_count' => $request->filled('axle_count_id')
                 ? $request->axle_count_id
                 : null,
@@ -539,51 +537,17 @@ class SearchController extends Controller
                 ? $request->perm_gvw
                 : null,
         ];
-        // if ($user = auth('sanctum')->user()) {
-        //     UserSearchLog::create([
-        //         'user_id'       => $user->id,
-        //         'filters'       => $request->except(['page']),
-        //         'results_count' => $vehicles->total(),
-        //         'ip_address'    => $request->ip(),
-        //     ]);
-        // }
-
 
         return $this->success([
             'filters'  => $filters,
             'vehicles' => $vehicles,
         ], 'Vehicle Fetched Successfully', 200);
     }
-    // public function latestPopular(Request $request)
-    // {
-    //     $vehicles = Vehicle::select(
-    //         'vehicles.id',
-    //         'vehicles.category_id',
-    //         'vehicles.brand_id',
-    //         'vehicles.model_id',
-    //         'vehicles.body_type_id',
-    //         'vehicles.sub_model_id',
-    //         'vehicles.power_id',
-    //         'vehicles.price',
-    //         'vehicles.first_registration'
-    //     )
-    //         ->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo', 'power', 'data.condition']) // eager load relations
-    //         ->leftJoin('search_logs', 'vehicles.id', '=', 'search_logs.vehicle_id')
-    //         ->groupBy('vehicles.id')
-    //         ->orderByDesc(DB::raw('COUNT(search_logs.id)')) // search count
-    //         ->orderByDesc(DB::raw('MAX(search_logs.searched_at)')) // latest search
-    //         ->paginate(20);
 
-    //     $totalVehicles = $vehicles->total();
-
-    //     return $this->success([
-    //         'total' => $totalVehicles,
-    //         'data' => $vehicles->items()
-    //     ], 'Vehicles fetched successfully', 200);
-    // }
+    // latestPopular
     public function latestPopular(Request $request)
     {
-        // Step 1: Aggregate search logs (popularity data)
+        $user = auth('sanctum')->user();
         $popular = DB::table('search_logs')
             ->select(
                 'vehicle_id',
@@ -592,7 +556,6 @@ class SearchController extends Controller
             )
             ->groupBy('vehicle_id');
 
-        // Step 2: Join with vehicles table + eager load relationships
         $vehicles = Vehicle::select('vehicles.*')
             ->leftJoinSub($popular, 'pop', function ($join) {
                 $join->on('vehicles.id', '=', 'pop.vehicle_id');
@@ -608,13 +571,17 @@ class SearchController extends Controller
                 'contactInfo.country',
                 'contactInfo.city',
                 'power',
-                'data.condition'
+                'data.condition',
+                'transmission'
             ])
+            ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
+                $q->where('user_id', $user?->id);
+            }])
             ->orderByDesc(DB::raw('COALESCE(pop.search_count, 0)'))
             ->orderByDesc('pop.last_search')
             ->paginate(20);
 
-        // Step 3: Get total count (for frontend pagination)
+        // Step 3: Get total count
         $totalVehicles = $vehicles->total();
 
         // Step 4: Return success response
@@ -623,6 +590,8 @@ class SearchController extends Controller
             'data' => $vehicles->items()
         ], 'Vehicles fetched successfully', 200);
     }
+
+    // getFilteredSearch
     public function getFilteredSearch()
     {
         $user = auth('sanctum')->user();
@@ -631,8 +600,8 @@ class SearchController extends Controller
             return $this->error('Unauthorized', 401);
         }
 
-        // ইউজারের সর্বশেষ সার্চ লগটি নিয়ে আসা
-        $lastSearch = UserSearchLog::where('user_id', $user->id)
+        $lastSearch = UserSearchLog::with(['contactInfo.country', 'contactInfo.city'])
+            ->where('user_id', $user->id)
             ->latest()
             ->first();
 
@@ -640,13 +609,23 @@ class SearchController extends Controller
             return $this->success(null, 'No search history found', 200);
         }
 
-        // যদি filters কলামটি JSON হিসেবে সেভ থাকে এবং মডেলে Cast করা থাকে,
-        // তবে এটি সরাসরি অ্যারে হিসেবে আসবে।
+        $contact = null;
+        if ($lastSearch->contactInfo) {
+            $contact = $lastSearch->contactInfo;
+            
+            $contact->country_name = $contact->country?->name ?? null;
+            $contact->city_name    = $contact->city?->name    ?? null;
+
+            $contact->makeHidden(['country', 'city']);
+        }
+
         return $this->success([
             'log_id'           => $lastSearch->id,
             'last_searched_at' => $lastSearch->created_at->diffForHumans(),
             'results_found'    => $lastSearch->results_count,
-            'filters'          => $lastSearch->filters, // এখানে এখন ID এবং Name দুইটাই আছে
-        ], 'Last search filters fetched successfully');
+            'filters'          => $lastSearch->filters,
+            'contact_info'     => $contact,
+        ],  'Last search filters fetched successfully');
     }
-}
+        
+}    

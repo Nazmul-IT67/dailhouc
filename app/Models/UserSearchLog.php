@@ -7,13 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class UserSearchLog extends Model
 {
     protected $fillable = [
-    'user_id',
-    'filters',
-    'results_count',
-    'ip_address'
-];
+        'user_id',
+        'filters',
+        'results_count',
+        'ip_address'
+    ];
 
     protected $casts = [
         'filters' => 'array',
     ];
+
+
+    public function contactInfo()
+    {
+        return $this->hasOne(ContactInfo::class, 'vehicle_id', 'vehicle_id');
+    }
 }

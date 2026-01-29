@@ -152,6 +152,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('/vehicle/search')->controller(SearchController::class)->group(function () {
+        Route::post('/store-search', 'storeSearch');
         Route::get('/last-filters', 'getFilteredSearch');
     });
 

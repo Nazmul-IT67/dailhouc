@@ -758,7 +758,7 @@ class VehicleController extends Controller
             ->with([
                 'category' => $withTr, 'brand' => $withTr, 'model' => $withTr, 
                 'subModel' => $withTr, 'photos', 'power', 'currency', 'baseCurrency',
-                'contactInfo.country', 'contactInfo.city', 'data.condition',
+                'contactInfo.country', 'contactInfo.city', 'data.condition', 'fuel',
                 'user' => function($q) use ($withTr) {
                     $q->with(['country' => $withTr, 'city' => $withTr]);
                 }

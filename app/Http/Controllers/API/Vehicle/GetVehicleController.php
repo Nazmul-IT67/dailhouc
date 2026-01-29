@@ -204,7 +204,7 @@ class GetVehicleController extends Controller
             'transmission' => $withTranslation,
             'equipment_line' => $withTranslation,
             'seller_type' => $withTranslation,
-            'currency', 'baseCurrency'
+            'currency', 'baseCurrency', 'fuel'
         ])->find($vehicleId);
 
         if (!$vehicle) {
@@ -297,7 +297,7 @@ class GetVehicleController extends Controller
 
         $vehicles = Vehicle::with([
             'category' => $withTr, 'brand' => $withTr, 'model' => $withTr,
-            'subModel' => $withTr, 'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition'
+            'subModel' => $withTr, 'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition', 'fuel'
         ])
         ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
             $q->where('user_id', $user?->id);
@@ -374,7 +374,7 @@ class GetVehicleController extends Controller
             'brand' => $withTr,
             'model' => $withTr,
             'subModel' => $withTr,
-            'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition'
+            'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition', 'fuel'
         ])
         ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
             $q->where('user_id', $user?->id);

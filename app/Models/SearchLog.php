@@ -11,12 +11,12 @@ class SearchLog extends Model
 
     public $timestamps = false;
     protected $guarded = [];
+    
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
     }
 
-    // Relation with User (optional)
     public function user()
     {
         return $this->belongsTo(User::class);

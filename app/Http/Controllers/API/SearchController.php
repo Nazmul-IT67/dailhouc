@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\BodyColor;
+use App\Models\Category;
 use App\Models\Equipment;
 use App\Models\InteriorColor;
 use App\Models\SearchLog;
@@ -35,7 +36,7 @@ class SearchController extends Controller
             'vehicles.milage',
             'vehicles.engine_displacement',
             'vehicles.first_registration'
-        )->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition']);
+        )->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition', 'fuel']);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -572,7 +573,8 @@ class SearchController extends Controller
                 'contactInfo.city',
                 'power',
                 'data.condition',
-                'transmission'
+                'transmission',
+                'fuel'
             ])
             ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
                 $q->where('user_id', $user?->id);
@@ -600,7 +602,7 @@ class SearchController extends Controller
             return $this->error('Unauthorized', 401);
         }
 
-        $lastSearch = UserSearchLog::with(['contactInfo.country', 'contactInfo.city'])
+        $lastSearch = UserSearchLog::with(['contactInfo.country', 'contactInfo.city', 'category'])
             ->where('user_id', $user->id)
             ->latest()
             ->first();
@@ -621,11 +623,54 @@ class SearchController extends Controller
 
         return $this->success([
             'log_id'           => $lastSearch->id,
+            'category_id'      => $lastSearch->category_id,
+            'category_name'    => $lastSearch->category?->name ?? null,
             'last_searched_at' => $lastSearch->created_at->diffForHumans(),
             'results_found'    => $lastSearch->results_count,
             'filters'          => $lastSearch->filters,
             'contact_info'     => $contact,
-        ],  'Last search filters fetched successfully');
+        ], 'Last search filters fetched successfully');
+    }
+
+    // storeFilteredSearch
+    public function storeSearch(Request $request)
+    {
+        $user = auth('sanctum')->user();
+        $keyword = $request->input('keyword');
+
+        if (!$keyword) {
+            return $this->error('Keyword is required', 400);
+        }
+
+        $category = Category::where('name', 'LIKE', "%{$keyword}%")->first();
+
+        $query = Vehicle::query();
+
+        if ($category) {
+            $query->where('category_id', $category->id);
+        } else {
+            $query->where('description', 'LIKE', "%{$keyword}%");
+        }
+
+        $vehicles = $query->paginate(10);
+
+        $logFilters = [
+            'keyword' => $keyword,
+            'search_time' => now()->toDateTimeString(),
+        ];
+
+        $log = UserSearchLog::create([
+            'user_id'       => $user?->id,
+            'category_id'   => $category?->id,
+            'filters'       => $logFilters,
+            'results_count' => $vehicles->total(),
+            'ip_address'    => $request->ip(),
+        ]);
+
+        return $this->success([
+            'log' => $log,
+            'data' => $vehicles->items(),
+        ], 'Search logic executed successfully.');
     }
         
 }    

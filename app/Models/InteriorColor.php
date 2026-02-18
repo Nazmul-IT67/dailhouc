@@ -25,4 +25,9 @@ class InteriorColor extends Model
         }
         return $value;
     }
+
+    public function vehicleData()
+    {
+        return $this->hasMany(VehicleData::class, 'interior_color_id');
+    }
 }

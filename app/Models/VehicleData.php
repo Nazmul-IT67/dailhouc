@@ -76,4 +76,9 @@ class VehicleData extends Model
         // Default fallback (English name)
         return \App\Models\BedType::whereIn('id', (array)$this->bed_type_id)->pluck('name')->toArray();
     }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+    }
 }

@@ -148,14 +148,12 @@ class VehicleController extends Controller
     public function getSubModelsByModel(Request $request)
     {
         $car_model_id = $request->car_model_id;
-        // Default language English ('en') dhore nichi
         $language = $request->query('language', 'en');
 
         if (!$car_model_id) {
             return $this->error([], 'Car Model ID is required', 400);
         }
 
-        // subModels-er sathe translations load kora
         $carModel = CarModel::with(['subModels.translations' => function ($q) use ($language) {
             $q->where('language', $language);
         }, 'translations' => function ($q) use ($language) {
@@ -168,12 +166,10 @@ class VehicleController extends Controller
             return $this->error([], 'Car Model not found', 404);
         }
 
-        // Data format kora jate shudhu translated name jay
         $subModels = $carModel->subModels->map(function ($subModel) {
             return [
                 'id'           => $subModel->id,
                 'car_model_id' => $subModel->car_model_id,
-                // Jodi translation thake tobe seta, na thakle main name (English)
                 'name'         => $subModel->translations->first()->name ?? $subModel->name,
             ];
         });
@@ -301,24 +297,34 @@ class VehicleController extends Controller
     public function getUpholsteries(Request $request)
     {
         $language = $request->query('language');
+        $categoryId = $request->query('category_id');
 
         $data = Upholstery::when($language, function ($q) use ($language) {
-            $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
-        })->orderBy('name')->get();
+                $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+            })
+            ->withCount(['vehicleData as categories_count' => function ($query) use ($categoryId) {
+                $query->join('vehicles', 'vehicle_data.vehicle_id', '=', 'vehicles.id');
+                
+                if ($categoryId) {
+                    $query->where('vehicles.category_id', $categoryId);
+                }
+                
+                $query->select(\DB::raw('count(distinct(vehicles.category_id))'));
+            }])
+            ->orderBy('id')
+            ->get();
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Upholsteries found', 200);
         }
 
-        if ($language) {
-            $data->transform(function ($item) {
-                if ($item->translations->isNotEmpty()) {
-                    $translation = $item->translations->first();
-                    $item->name = $translation->name ?? $item->name;
-                }
-                return $item->makeHidden('translations');
-            });
-        }
+        $data->transform(function ($item) use ($language) {
+            if ($language && $item->translations->isNotEmpty()) {
+                $translation = $item->translations->first();
+                $item->name = $translation->name ?? $item->name;
+            }
+            return $item->makeHidden('translations');
+        });
 
         return $this->success($data, 'Upholsteries fetched successfully', 200);
     }
@@ -327,24 +333,31 @@ class VehicleController extends Controller
     public function getInteriorColors(Request $request)
     {
         $language = $request->query('language');
+        $categoryId = $request->query('category_id');
 
         $data = InteriorColor::when($language, function ($q) use ($language) {
-            $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
-        })->orderBy('name')->get();
+                $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+            })
+            ->withCount(['vehicleData as vehicle_count' => function ($query) use ($categoryId) {
+                $query->join('vehicles', 'vehicle_data.vehicle_id', '=', 'vehicles.id');
+                if ($categoryId) {
+                    $query->where('vehicles.category_id', $categoryId);
+                }
+                $query->select(\DB::raw('count(distinct(vehicles.category_id))'));
+            }])
+            ->orderBy('id')
+            ->get();
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Interior color found', 200);
         }
 
-        if ($language) {
-            $data->transform(function ($item) {
-                if ($item->translations->isNotEmpty()) {
-                    $translation = $item->translations->first();
-                    $item->name = $translation->name ?? $item->name;
-                }
-                return $item->makeHidden('translations');
-            });
-        }
+        $data->transform(function ($item) use ($language) {
+            if ($language && $item->translations->isNotEmpty()) {
+                $item->name = $item->translations->first()->name ?? $item->name;
+            }
+            return $item->makeHidden('translations');
+        });
 
         return $this->success($data, 'Interior Colors fetched successfully', 200);
     }
@@ -462,23 +475,29 @@ class VehicleController extends Controller
     public function getTransmission(Request $request)
     {
         $language = $request->query('language', app()->getLocale());
+        $categoryId = $request->query('category_id');
+
         $data = Transmission::when($language, function ($q) use ($language) {
-            $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
-        })->orderBy('title')->get();
+                $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+            })
+            ->withCount(['vehicles as vehicles_count' => function ($query) use ($categoryId) {
+                if ($categoryId) {
+                    $query->where('category_id', $categoryId);
+                }
+                $query->select(\DB::raw('count(distinct(category_id))'));
+            }])->orderBy('id')->get();
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Transmission Found', 200);
         }
 
-        if ($language) {
-            $data->transform(function ($item) {
-                if ($item->translations->isNotEmpty()) {
-                    $translation = $item->translations->first();
-                    $item->title = $translation->title ?? $item->title;
-                }
-                return $item->makeHidden('translations');
-            });
-        }
+        $data->transform(function ($item) use ($language) {
+            if ($language && $item->translations->isNotEmpty()) {
+                $translation = $item->translations->first();
+                $item->title = $translation->title ?? $item->title;
+            }
+            return $item->makeHidden('translations');
+        });
 
         return $this->success($data, 'Transmission fetched successfully', 200);
     }
@@ -533,26 +552,28 @@ class VehicleController extends Controller
     public function getFuelTypes(Request $request)
     {
         $language = $request->query('language');
-        $query = Fuel::query();
+        $categoryId = $request->query('category_id');
 
-        if ($language) {
-            $query->with(['translations' => function ($q) use ($language) {
-                $q->where('language', $language);
-            }]);
-        }
-
-        $fuels = $query->get();
+        $fuels = Fuel::with(['translations' => function ($q) use ($language) {
+                if ($language) {
+                    $q->where('language', $language);
+                }
+            }])
+            ->withCount(['vehicles as vehicles_count' => function ($query) use ($categoryId) {
+                if ($categoryId) {
+                    $query->where('category_id', $categoryId);
+                }
+                $query->select(\DB::raw('count(distinct(category_id))'));
+            }])
+            ->get();
 
         if ($fuels->isEmpty()) {
             return $this->error([], 'No Fuel Types Found', 200);
         }
 
         foreach ($fuels as $fuel) {
-            if ($language) {
-                $translation = $fuel->translations->first();
-                if ($translation) {
-                    $fuel->title = $translation->title;
-                }
+            if ($language && $fuel->translations->isNotEmpty()) {
+                $fuel->title = $fuel->translations->first()->title ?? $fuel->title;
             }
             $fuel->makeHidden('translations');
         }
@@ -648,24 +669,31 @@ class VehicleController extends Controller
     public function getSellerTypes(Request $request)
     {
         $language = $request->query('language');
+        $categoryId = $request->query('category_id');
 
         $data = SellerType::when($language, function ($q) use ($language) {
-            $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
-        })->orderBy('title')->get();
+                $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+            })
+            ->withCount(['vehicles as vehicles_count' => function ($query) use ($categoryId) {
+                if ($categoryId) {
+                    $query->where('category_id', $categoryId);
+                }
+                $query->select(\DB::raw('count(distinct(category_id))'));
+            }])
+            ->orderBy('id')
+            ->get();
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Seller Types Found', 200);
         }
 
-        if ($language) {
-            $data->transform(function ($item) {
-                if ($item->translations->isNotEmpty()) {
-                    $translation = $item->translations->first();
-                    $item->title = $translation->title ?? $item->title;
-                }
-                return $item->makeHidden('translations');
-            });
-        }
+        $data->transform(function ($item) use ($language) {
+            if ($language && $item->translations->isNotEmpty()) {
+                $translation = $item->translations->first();
+                $item->title = $translation->title ?? $item->title;
+            }
+            return $item->makeHidden('translations');
+        });
 
         return $this->success($data, 'Seller Types fetched successfully', 200);
     }

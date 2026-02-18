@@ -128,7 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('vehicle')->controller(GetVehicleController::class)->group(function () {
         Route::get('/get-all-vehicle', 'getAllVehicles');
         Route::get('/get-users-vehicle', 'getUsersVehicle');
-        Route::get('/get-vehicle-by-userId', 'getVehiclesByUserId');
+        // Route::get('/get-vehicle-by-userId', 'getVehiclesByUserId');
         Route::get('/get-pending-and-all', 'getPendingAndAllVehicle');
         Route::get('/vehicle-details', 'vehicleDetails');
         Route::get('/featured', 'featured');
@@ -158,6 +158,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/last-filters', 'getFilteredSearch');
     });
 
+});
+
+Route::prefix('vehicle')->controller(GetVehicleController::class)->group(function () {
+    Route::get('/get-vehicle-by-userId', 'getVehiclesByUserId');
 });
 
 Route::prefix('pages')->group(function () {

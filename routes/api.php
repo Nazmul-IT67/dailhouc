@@ -28,7 +28,6 @@ Route::post("login", [AuthController::class, 'login']);
 Route::controller(RegisterController::class)->prefix('users/register')->group(function () {
     // User Register
     Route::post('/', 'userRegister');
-
     // Verify OTP
     Route::post('/otp-verify', 'otpVerify');
 
@@ -37,8 +36,8 @@ Route::controller(RegisterController::class)->prefix('users/register')->group(fu
     //email exists check
     Route::post('/email-exists', 'emailExists');
 });
-Route::controller(LoginController::class)->prefix('users/login')->group(function () {
 
+Route::controller(LoginController::class)->prefix('users/login')->group(function () {
     // User Login
     Route::post('/', 'userLogin');
 
@@ -54,14 +53,21 @@ Route::controller(LoginController::class)->prefix('users/login')->group(function
     //Reset Password
     Route::post('/reset-password', 'resetPassword');
 });
+
 Route::prefix('location')->controller(LocationController::class)->group(function () {
     Route::get('/countries', 'getCountry');
     Route::get('/cities', 'getCity');
 });
+
 Route::prefix('/vehicle/search')->controller(SearchController::class)->group(function () {
     Route::get('/', 'index');
+    Route::post('/save-search', 'saveSearch');
+    Route::delete('/delete-search', 'deleteSearch');
+
     Route::get('/latest-search', 'latestPopular');
+    Route::get('/last-filters', 'getFilteredSearch');
 });
+
 Route::prefix('vehicle')->controller(VehicleController::class)->group(function () {
     Route::get('/categories', 'getCategory');
     Route::get('/brands', 'getBrandByCategory');
@@ -91,6 +97,7 @@ Route::prefix('vehicle')->controller(VehicleController::class)->group(function (
     Route::get('/seller-types', 'getSellerTypes');
     Route::post('/favorite', 'toggleFavorite');
     Route::get('/favorites', 'getFavoriteVehicles');
+    Route::get('/model-year', 'getModelYears');
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -114,10 +121,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', 'logoutUser');
     });
 
-
     Route::prefix('vehicle')->controller(StoreVehicleController::class)->group(function () {
         Route::post('/store', 'store');
     });
+
     Route::prefix('vehicle')->controller(GetVehicleController::class)->group(function () {
         Route::get('/get-all-vehicle', 'getAllVehicles');
         Route::get('/get-users-vehicle', 'getUsersVehicle');
@@ -128,10 +135,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-    Route::prefix('pages')->group(function () {
-        Route::get('/', [DynamicPageController::class, 'index']);   // GET /api/pages
-        Route::get('/{slug}', [DynamicPageController::class, 'show']); // GET /api/pages/{slug}
-    });
     Route::prefix('vehicle')->controller(VehicleController::class)->group(function () {
         Route::post('/favorite', 'toggleFavorite');
         Route::get('/favorites', 'getFavoriteVehicles');
@@ -152,8 +155,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('/vehicle/search')->controller(SearchController::class)->group(function () {
-        Route::post('/store-search', 'storeSearch');
         Route::get('/last-filters', 'getFilteredSearch');
     });
 
+});
+
+Route::prefix('pages')->group(function () {
+    Route::get('/', [DynamicPageController::class, 'index']);   // GET /api/pages
+    Route::get('/{slug}', [DynamicPageController::class, 'show']); // GET /api/pages/{slug}
 });

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API\Vehicle;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\Vehicle;
-use Illuminate\Support\Facades\Auth; // Correct import
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -204,7 +204,7 @@ class GetVehicleController extends Controller
             'transmission' => $withTranslation,
             'equipment_line' => $withTranslation,
             'seller_type' => $withTranslation,
-            'currency', 'baseCurrency', 'fuel'
+            'currency', 'baseCurrency', 'fuel', 'engineAndEnvironment.cylinders', 'engineAndEnvironment.numOfGears'
         ])->find($vehicleId);
 
         if (!$vehicle) {
@@ -291,7 +291,7 @@ class GetVehicleController extends Controller
     // getPendingAndAllVehicle
     public function getPendingAndAllVehicle(Request $request)
     {
-        $user = auth('sanctum')->user();
+        $user = Auth::user();
         $lang = $request->query('language');
         $withTr = fn($q) => $lang ? $q->with(['translations' => fn($t) => $t->where('language', $lang)]) : null;
 
@@ -361,7 +361,7 @@ class GetVehicleController extends Controller
     // getfeatured
     public function featured(Request $request)
     {
-        $user = auth('sanctum')->user();
+        $user = Auth::user();
         $lang = $request->query('language');
         $withTr = function ($q) use ($lang) {
             if ($lang) {
@@ -418,4 +418,87 @@ class GetVehicleController extends Controller
         return $this->success($featuredVehicles, 'Featured vehicles fetched successfully', 200);
     }
 
+    // getVehiclesByUserId
+    public function getVehiclesByUserId(Request $request)
+    {
+        $targetUserId = $request->query('user_id') ?? auth()->id();
+
+        if (!$targetUserId) {
+            return $this->error([], 'User ID is required or you must be logged in.', 401);
+        }
+
+        $language = $request->query('language');
+
+        $withTranslation = function($q) use ($language) {
+            if ($language) {
+                $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            }
+        };
+
+        $vehicles = Vehicle::select(
+            'vehicles.id', 'vehicles.category_id', 'vehicles.brand_id', 'vehicles.model_id',
+            'vehicles.body_type_id', 'vehicles.sub_model_id', 'vehicles.power_id',
+            'vehicles.price', 'vehicles.price_in_base', 'vehicles.currency_id',
+            'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id'
+        )
+        ->with([
+            'power',
+            'category'  => $withTranslation,
+            'brand'     => $withTranslation,
+            'model'     => $withTranslation,
+            'body_type' => $withTranslation,
+            'subModel'  => $withTranslation,
+            'photos', 'contactInfo', 'data.condition', 'currency', 'baseCurrency'
+        ])
+        ->where('user_id', $targetUserId)
+        ->where('status', 1)
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+        if ($vehicles->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => "No vehicles found for this user!",
+                'data' => [],
+                'code' => 404
+            ], 404);
+        }
+
+        $baseCurrency = Currency::where('is_default', 1)->first() ?? Currency::where('code', 'USD')->first();
+        $viewerCurrency = auth()->user()?->country?->currency ?? $baseCurrency;
+
+        $vehicles->getCollection()->transform(function ($v) use ($language, $baseCurrency, $viewerCurrency)
+        {
+            $relations = ['category', 'brand', 'model', 'body_type', 'subModel'];
+            
+            if ($language) {
+                foreach ($relations as $rel) {
+                    if ($v->$rel && $v->$rel->translations->isNotEmpty()) {
+                        $tr = $v->$rel->translations->first();
+                        $translatedValue = $tr->name ?? $tr->title;
+                        $v->$rel->name = $translatedValue;
+                        if (isset($v->$rel->title)) {
+                            $v->$rel->title = $translatedValue;
+                        }
+                    }
+                    if ($v->$rel) $v->$rel->makeHidden('translations');
+                }
+            }
+
+            if ($v->data) $v->data->bed_types = $v->data->bedTypes;
+
+            $v->poster_price = number_format($v->price, 2);
+            $v->poster_currency_symbol = $v->currency?->symbol ?? '';
+            $v->base_price = number_format($v->price_in_base, 2);
+            $v->base_currency_symbol = $v->baseCurrency?->symbol ?? '$';
+            $v->viewer_price = number_format(
+                convertPrice($v->price_in_base, $baseCurrency->code, $viewerCurrency->code), 2
+            );
+            $v->viewer_currency_symbol = $viewerCurrency->symbol;
+
+            return $v;
+        });
+
+        return $this->success($vehicles, 'User vehicles fetched successfully!', 200);
+    }
 }

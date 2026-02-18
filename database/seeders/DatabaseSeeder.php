@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             EquipmentLineSeeder::class,
             SellerTypeSeeder::class,
             VehicleSeeder::class,
+            ModelYearSeeder::class,
         ]);
 
         User::factory()->create([

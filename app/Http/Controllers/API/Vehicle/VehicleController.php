@@ -27,6 +27,7 @@ use App\Models\SellerType;
 use App\Models\Transmission;
 use App\Models\Upholstery;
 use App\Models\Vehicle;
+use App\Models\ModelYear;
 use App\Models\VehicleCondition;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
@@ -791,5 +792,12 @@ class VehicleController extends Controller
         });
 
         return $this->success($vehicles, 'Favorite vehicles fetched successfully', 200);
+    }
+
+    // getModelYears
+    public function getModelYears()
+    {
+        $years = ModelYear::select('id', 'year')->orderBy('year', 'desc')->get();
+        return $this->success($years, 'Model years fetched successfully', 200);
     }
 }

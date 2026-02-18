@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\NumberOfDoorController;
 use App\Http\Controllers\Admin\NumberOfSeatsController;
 use App\Http\Controllers\Admin\PowerController;
 use App\Http\Controllers\Admin\SellerTypeController;
+use App\Http\Controllers\Admin\ModelYearController;
 use App\Http\Controllers\Admin\GetVehicleController as AdminVehicleController;
 use App\Http\Controllers\Admin\GetVehicleListController;
 use App\Models\CarModel;
@@ -300,6 +301,12 @@ Route::prefix('seller_types')->name('seller_types.')->controller(SellerTypeContr
     Route::post('/store', 'store')->name('store');
     Route::get('/edit/{id}', 'edit')->name('edit');
     Route::put('/update/{id}', 'update')->name('update');
+    Route::delete('/destroy/{id}', 'destroy')->name('destroy');
+});
+Route::prefix('model_years')->name('model_years.')->controller(ModelYearController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/create', 'create')->name('create');
+    Route::post('/store', 'store')->name('store');
     Route::delete('/destroy/{id}', 'destroy')->name('destroy');
 });
 Route::prefix('vehicles')->name('vehicles.')->controller(GetVehicleListController::class)->group(function () {

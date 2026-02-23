@@ -624,10 +624,6 @@ class SearchController extends Controller
     // saveSearch
     public function saveSearch(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'search' =>'nullable|array'
-        // ]);
-
         $query = Vehicle::select(
             'vehicles.id',
             'vehicles.category_id',
@@ -655,18 +651,22 @@ class SearchController extends Controller
             $modelIds = (array) $request->model_id;
             $query->whereIn('model_id', $modelIds);
         }
+
         if ($request->filled('sub_model_id')) {
             $subModelIds = (array) $request->sub_model_id;
             $query->whereIn('sub_model_id', $subModelIds);
         }
 
-        if ($request->filled('budget_from') && $request->filled('budget_to')) {
+        if ($request->filled('budget_from') && $request->filled('budget_to'))
+        {
             $query->whereBetween('price', [$request->budget_from, $request->budget_to]);
-        } elseif ($request->filled('budget_from')) {
+        }elseif ($request->filled('budget_from'))
+        {
             $query->where('price', '>=', $request->budget_from);
         } elseif ($request->filled('budget_to')) {
             $query->where('price', '<=', $request->budget_to);
         }
+
         if ($request->filled('indicate_vat')) {
             $query->whereHas('data', function ($q) use ($request) {
                 $q->where('indicate_vat', $request->indicate_vat);
@@ -679,7 +679,8 @@ class SearchController extends Controller
             });
         }
 
-        if ($request->filled('displacement_from') || $request->filled('displacement_to')) {
+        if ($request->filled('displacement_from') || $request->filled('displacement_to'))
+        {
             $query->where(function ($q) use ($request) {
                 if ($request->filled('displacement_from')) {
                     $q->where('engine_displacement', '>=', $request->displacement_from);
@@ -692,7 +693,7 @@ class SearchController extends Controller
         }
 
         if ($request->filled('body_type_id')) {
-            $bodyTypeIds = (array) $request->body_type_id; // force array
+            $bodyTypeIds = (array) $request->body_type_id;
             $query->whereIn('body_type_id', $bodyTypeIds);
         }
 
@@ -711,6 +712,7 @@ class SearchController extends Controller
                 $q->where('service_history', $request->service_history);
             });
         }
+
         if ($request->filled('damaged_vehicle')) {
             $query->whereHas('conditionAndMaintenance', function ($q) use ($request) {
                 $q->where('damaged_vehicle', $request->damaged_vehicle);
@@ -721,7 +723,6 @@ class SearchController extends Controller
             $request->filled('power_from') || $request->filled('power_to') || $request->filled('power_unit'),
             function ($q) use ($request) {
                 $q->whereHas('power', function ($q2) use ($request) {
-                    // Value filter
                     if ($request->filled('power_from') && $request->filled('power_to')) {
                         $q2->whereBetween('value', [$request->power_from, $request->power_to]);
                     } elseif ($request->filled('power_from')) {
@@ -729,7 +730,6 @@ class SearchController extends Controller
                     } elseif ($request->filled('power_to')) {
                         $q2->where('value', '<=', $request->power_to);
                     }
-                    // Unit filter
                     if ($request->filled('power_unit')) {
                         $q2->where('unit', $request->power_unit);
                     }
@@ -744,6 +744,7 @@ class SearchController extends Controller
         } elseif ($request->filled('first_registration_to')) {
             $query->where('first_registration', '<=', $request->first_registration_to);
         }
+
         if ($request->filled('mileage_from') && $request->filled('mileage_to')) {
             $query->whereBetween('milage', [$request->mileage_from, $request->mileage_to]);
         } elseif ($request->filled('mileage_from')) {
@@ -763,6 +764,7 @@ class SearchController extends Controller
                 }
             });
         }
+
         if ($request->filled('bed_count_from') || $request->filled('bed_count_to')) {
             $query->whereHas('data.bedCount', function ($q) use ($request) {
                 if ($request->filled('bed_count_from') && $request->filled('bed_count_to')) {
@@ -774,6 +776,7 @@ class SearchController extends Controller
                 }
             });
         }
+
         if ($request->filled('bed_type_id')) {
             $query->whereHas('data', function ($q) use ($request) {
                 $q->whereIn('bed_type_id', (array) $request->bed_type_id);
@@ -785,6 +788,7 @@ class SearchController extends Controller
                 $q->where('previous_owner_id', $request->previous_owner_id);
             });
         }
+
         if ($request->filled('number_of_seats_from') || $request->filled('number_of_seats_to')) {
             $query->whereHas('data.numOfSeats', function ($q) use ($request) {
                 if ($request->filled('number_of_seats_from') && $request->filled('number_of_seats_to')) {
@@ -798,7 +802,6 @@ class SearchController extends Controller
         }
 
         $equipmentIds = $request->input('equipment_ids', []);
-
         if (!empty($equipmentIds)) {
             $query->where(function ($q) use ($equipmentIds) {
                 foreach ($equipmentIds as $id) {
@@ -810,11 +813,13 @@ class SearchController extends Controller
         if ($request->filled('seller_type_id')) {
             $query->where('seller_type_id', $request->seller_type_id);
         }
+
         if ($request->filled('guarantee')) {
             $query->whereHas('conditionAndMaintenance', function ($q) use ($request) {
                 $q->where('guarantee', $request->guarantee); // 1 or 0
             });
         }
+
         if ($request->filled('technical_inspection_valid_until')) {
             if ($request->technical_inspection_valid_until == 1) {
                 $query->whereHas('conditionAndMaintenance', function ($q) {
@@ -826,6 +831,7 @@ class SearchController extends Controller
                 });
             }
         }
+
         if ($request->filled('body_color_id')) {
             $query->whereHas('data', function ($q) use ($request) {
                 $q->whereIn('body_color_id', (array) $request->body_color_id);
@@ -855,19 +861,19 @@ class SearchController extends Controller
                 $q->where('emission_classes_id', $request->emission_classes_id);
             });
         }
+
         if ($request->filled('catalytic_converter')) {
             $query->whereHas('engineAndEnvironment', function ($q) use ($request) {
                 $q->where('catalytic_converter', (int) $request->catalytic_converter);
             });
         }
-        // Filter by Axle Count
+        
         if ($request->filled('axle_count_id')) {
             $query->whereHas('engineAndEnvironment', function ($q) use ($request) {
                 $q->where('axle_count_id', $request->axle_count_id);
             });
         }
 
-        // Filter by Perm GVW
         if ($request->filled('perm_gvw')) {
             $query->whereHas('engineAndEnvironment', function ($q) use ($request) {
                 $q->where('perm_gvw', 'like', "%{$request->perm_gvw}%");
@@ -885,7 +891,6 @@ class SearchController extends Controller
             $query->whereHas('photos');
         }
 
-        // to view in response
         $bodyColorNames = [];
         if ($request->filled('body_color_id')) {
             $bodyColorNames = BodyColor::whereIn('id', (array)$request->body_color_id)
@@ -929,7 +934,7 @@ class SearchController extends Controller
         if ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
-            $radius = $request->input('radius', $defaultRadius); // user input or default
+            $radius = $request->input('radius', $defaultRadius);
             $query->join('contact_infos', 'contact_infos.vehicle_id', '=', 'vehicles.id')
                 ->select('vehicles.*')
                 ->selectRaw("(6371 * acos(
@@ -1137,8 +1142,8 @@ class SearchController extends Controller
         ];
 
         return $this->success([
-            'filters'  => $filters,
             'vehicles' => $vehicles,
+            'filters'  => $filters,
         ],  'Search Save Successfully', 200);
     }
 

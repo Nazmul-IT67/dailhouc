@@ -271,23 +271,33 @@ class VehicleController extends Controller
     public function getBodyColors(Request $request)
     {
         $language = $request->query('language');
+        $categoryId = $request->query('category_id');
 
         $data = BodyColor::when($language, function ($q) use ($language) {
-            $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
-        })->orderBy('name')->get();
+                $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+            })
+            ->withCount(['vehicleData as categories_count' => function ($query) use ($categoryId) {
+                $query->join('vehicles', 'vehicle_data.vehicle_id', '=', 'vehicles.id');
+                
+                if ($categoryId) {
+                    $query->where('vehicles.category_id', $categoryId);
+                }
+                
+                $query->select(\Illuminate\Support\Facades\DB::raw('count(distinct(vehicles.category_id))'));
+            }])
+            ->orderBy('id')
+            ->get();
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Body Color found', 200);
         }
 
-        if ($language) {
-            $data->transform(function ($item) {
-                if ($item->translations->isNotEmpty()) {
-                    $translation = $item->translations->first();
-                    $item->name = $translation->name ?? $item->name;
-                }
-                return $item->makeHidden('translations');
-            });
+        foreach ($data as $item) {
+            if ($language && $item->translations->isNotEmpty()) {
+                $translation = $item->translations->first();
+                $item->name = $translation->name ?? $item->name;
+            }
+            $item->makeHidden('translations');
         }
 
         return $this->success($data, 'Body Colors fetched successfully', 200);
@@ -701,28 +711,36 @@ class VehicleController extends Controller
     // getEquipment
     public function getEquipment(Request $request)
     {
-        $query = Equipment::query();
         $language = $request->query('language');
+        $categoryId = $request->query('category_id');
+        $search = $request->query('search');
 
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
+        $query = Equipment::when($language, function ($q) use ($language) {
+            $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+        });
+
+        if ($search) {
             $query->where('title', 'like', "%{$search}%");
         }
 
-        $equipment = $query->get();
+        $equipment = $query->orderBy('id')->get();
+        foreach ($equipment as $item) {
+            $item->vehicles_count = \DB::table('vehicles')
+                ->when($categoryId, function ($q) use ($categoryId) {
+                    $q->where('category_id', $categoryId);
+                })
+                ->whereJsonContains('equipment_ids', (int)$item->id) 
+                ->distinct('category_id')
+                ->count('category_id');
+
+            if ($language && $item->translations->isNotEmpty()) {
+                $item->title = $item->translations->first()->title ?? $item->title;
+            }
+            $item->makeHidden('translations');
+        }
 
         if ($equipment->isEmpty()) {
             return $this->error([], 'No Equipment Found', 200);
-        }
-
-        foreach ($equipment as $data) {
-            if ($language) {
-                $translation = $data->translations->first();
-                if ($translation) {
-                    $data->title = $translation->title;
-                }
-            }
-            $data->makeHidden('translations');
         }
 
         return $this->success($equipment, 'Equipment fetched successfully', 200);
@@ -828,4 +846,30 @@ class VehicleController extends Controller
         $years = ModelYear::select('id', 'year')->orderBy('year', 'desc')->get();
         return $this->success($years, 'Model years fetched successfully', 200);
     }
+
+    // getOfferCount
+    // public function getOfferCount(Request $request)
+    // {
+    //     $query = Vehicle::query();
+    //     $filters = ['make_id', 'model_id', 'category_id', 'fuel_type_id', 'transmission_id', 'seller_type'];
+        
+    //     foreach ($filters as $filter) {
+    //         if ($request->filled($filter)) {
+    //             $query->where($filter, $request->input($filter));
+    //         }
+    //     }
+
+    //     if ($request->has('equipment_ids') && is_array($request->equipment_ids)) {
+    //         foreach ($request->equipment_ids as $id) {
+    //             $query->whereJsonContains('equipment_ids', (int)$id);
+    //         }
+    //     }
+
+    //     if ($request->filled('body_color_id')) {
+    //         $query->where('body_color_id', $request->body_color_id);
+    //     }
+
+    //     $totalOffers = $query->count();
+    //     return $this->success(['total_offers' => $totalOffers], 200);
+    // }
 }

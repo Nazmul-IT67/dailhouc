@@ -98,6 +98,7 @@ Route::prefix('vehicle')->controller(VehicleController::class)->group(function (
     Route::post('/favorite', 'toggleFavorite');
     Route::get('/favorites', 'getFavoriteVehicles');
     Route::get('/model-year', 'getModelYears');
+    // Route::post('/get-offer-count', 'getOfferCount');
 });
 
 Route::middleware('auth:sanctum')->group(function () {

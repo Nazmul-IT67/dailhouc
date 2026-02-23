@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Equipment extends Model
 {
@@ -24,5 +24,10 @@ class Equipment extends Model
             return $translation ? $translation->title : $value;
         }
         return $value; 
+    }
+
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class, 'equipment_id');
     }
 }

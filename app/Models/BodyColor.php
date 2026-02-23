@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BodyColor extends Model
 {
@@ -24,5 +24,10 @@ class BodyColor extends Model
             return $translation ? $translation->name : $value;
         }
         return $value;
+    }
+
+    public function vehicleData()
+    {
+        return $this->hasMany(VehicleData::class, 'body_color_id');
     }
 }

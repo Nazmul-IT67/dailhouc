@@ -634,6 +634,15 @@ class VehicleController extends Controller
             return $this->error([], 'No Power Found', 200);
         }
 
+        $data->transform(function ($power) {
+            return [
+                'id'       => $power->id,
+                'value'    => $power->value . ' KW',
+                'unit'     => $power->unit,
+                'power_hp' => $power->power_hp . ' HP'
+            ];
+        });
+
         return $this->success($data, 'Power fetched successfully', 200);
     }
 
@@ -803,12 +812,17 @@ class VehicleController extends Controller
                 $q->where('user_id', $user->id);
             })
             ->with([
-                'category' => $withTr, 'brand' => $withTr, 'model' => $withTr, 
-                'subModel' => $withTr, 'photos', 'power', 'currency', 'baseCurrency',
-                'contactInfo.country', 'contactInfo.city', 'data.condition', 'fuel',
-                'user' => function($q) use ($withTr) {
-                    $q->with(['country' => $withTr, 'city' => $withTr]);
-                }
+                'category' => $withTr, 
+                'brand' => $withTr, 
+                'model' => $withTr, 
+                'subModel' => $withTr, 
+                'fuel' => $withTr,
+                'data.condition' => $withTr,
+                'power', 'photos', 'currency', 'baseCurrency',
+                'contactInfo.country',
+                'contactInfo.city',
+                'user.country',
+                'user.city'
             ])
             ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
                 $q->where('user_id', $user->id);
@@ -847,29 +861,4 @@ class VehicleController extends Controller
         return $this->success($years, 'Model years fetched successfully', 200);
     }
 
-    // getOfferCount
-    // public function getOfferCount(Request $request)
-    // {
-    //     $query = Vehicle::query();
-    //     $filters = ['make_id', 'model_id', 'category_id', 'fuel_type_id', 'transmission_id', 'seller_type'];
-        
-    //     foreach ($filters as $filter) {
-    //         if ($request->filled($filter)) {
-    //             $query->where($filter, $request->input($filter));
-    //         }
-    //     }
-
-    //     if ($request->has('equipment_ids') && is_array($request->equipment_ids)) {
-    //         foreach ($request->equipment_ids as $id) {
-    //             $query->whereJsonContains('equipment_ids', (int)$id);
-    //         }
-    //     }
-
-    //     if ($request->filled('body_color_id')) {
-    //         $query->where('body_color_id', $request->body_color_id);
-    //     }
-
-    //     $totalOffers = $query->count();
-    //     return $this->success(['total_offers' => $totalOffers], 200);
-    // }
 }

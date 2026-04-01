@@ -124,6 +124,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('vehicle')->controller(StoreVehicleController::class)->group(function () {
         Route::post('/store', 'store');
+        Route::get('/show', 'show');
+        Route::post('/update', 'update');
+        Route::delete('/delete', 'delete');
     });
 
     Route::prefix('vehicle')->controller(GetVehicleController::class)->group(function () {

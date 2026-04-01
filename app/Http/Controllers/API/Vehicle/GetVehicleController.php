@@ -302,9 +302,9 @@ class GetVehicleController extends Controller
         ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
             $q->where('user_id', $user?->id);
         }])
+        ->where('user_id', $user->id)
         ->whereIn('status', [0, 1])
-        ->latest()
-        ->paginate(20);
+        ->latest()->paginate(20);
 
         $baseCur = Currency::where('is_default', 1)->first() ?? Currency::where('code', 'USD')->first();
         $viewCur = auth()->user()?->country?->currency ?? $baseCur;

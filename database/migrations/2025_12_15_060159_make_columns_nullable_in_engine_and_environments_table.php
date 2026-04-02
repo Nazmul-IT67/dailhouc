@@ -12,6 +12,7 @@ return new class () extends Migration {
             $table->unsignedBigInteger('num_of_gears_id')->nullable()->change();
             $table->unsignedBigInteger('cylinders_id')->nullable()->change();
             $table->unsignedBigInteger('emission_classes_id')->nullable()->change();
+            $table->unsignedBigInteger('transmission_id')->nullable()->change();
         });
     }
 
@@ -22,6 +23,7 @@ return new class () extends Migration {
             $table->unsignedBigInteger('num_of_gears_id')->nullable(false)->change();
             $table->unsignedBigInteger('cylinders_id')->nullable(false)->change();
             $table->unsignedBigInteger('emission_classes_id')->nullable(false)->change();
+            $table->unsignedBigInteger('transmission_id')->nullable(false)->change();
         });
     }
 };

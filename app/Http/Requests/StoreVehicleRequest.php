@@ -27,17 +27,15 @@ class StoreVehicleRequest extends FormRequest
             'brand_id'           => 'required|exists:brands,id',
             'model_id'           => 'required|exists:car_models,id',
             'first_registration' => 'required|date',
-            'fuel_id'            => 'required|exists:fuels,id',
-            'transmission_id'    => 'required|exists:transmissions,id',
-            'power_id'           => 'required|exists:powers,id',
+            // 'fuel_id'            => 'required|exists:fuels,id',
+            // 'transmission_id'    => 'required|exists:transmissions,id',
+            // 'power_id'           => 'required|exists:powers,id',
             'seller_type_id'     => 'required|exists:seller_types,id',
             'price'              => 'required|numeric',
             'milage'             => 'required|numeric',
             
             'num_of_door_id'  => Rule::requiredIf($isCar || $isCaravan || $isTransporter),
             'num_of_seats_id' => Rule::requiredIf($isCar || $isCaravan || $isTransporter),
-            'axle_count_id'   => Rule::requiredIf($isCaravan || $isTransporter || $isTrail),
-            
             'num_of_gears_id' => Rule::requiredIf(!$isTrail),
 
             'body_type_id' => [
@@ -47,12 +45,16 @@ class StoreVehicleRequest extends FormRequest
             ],
 
             'driver_type_id'    => 'nullable|exists:driver_types,id',
+            'axle_count_id'     => 'nullable|exists:axle_counts,id',
             'sub_model_id'      => 'nullable|exists:sub_models,id',
             'body_color_id'     => 'nullable|exists:body_colors,id',
             'metalic'           => 'nullable|boolean',
             'upholstery_id'     => 'nullable|exists:upholsteries,id',
             'interior_color_id' => 'nullable|exists:interior_colors,id',
             'previous_owner_id' => 'nullable|exists:previous_owners,id',
+            'fuel_id'           => 'nullable|exists:fuels,id',
+            'transmission_id'   => 'nullable|exists:transmissions,id',
+            'power_id'          => 'nullable|exists:powers,id',
             'negotiable'        => 'nullable|boolean',
             'indicate_vat'      => 'nullable|boolean',
             'engine_size'       => 'nullable|numeric',

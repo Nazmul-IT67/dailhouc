@@ -568,6 +568,7 @@ class SearchController extends Controller
             ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
                 $q->where('user_id', $user?->id);
             }])
+            ->where('vehicles.status', 1)
             ->orderByDesc(DB::raw('COALESCE(pop.search_count, 0)'))
             ->orderByDesc('pop.last_search')
             ->paginate(20);
@@ -590,11 +591,14 @@ class SearchController extends Controller
         if (!$user) {
             return $this->error('Unauthorized', 401);
         }
-
+        
         $lastSearch = UserSearchLog::with(['contactInfo.country', 'contactInfo.city', 'category'])
             ->where('user_id', $user->id)
+            ->whereHas('vehicle', function($query) {
+                $query->where('status', 1);
+            })
             ->latest()
-            ->first();
+            ->first();    
 
         if (!$lastSearch) {
             return $this->success(null, 'No search history found', 200);

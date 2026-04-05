@@ -37,7 +37,9 @@ class SearchController extends Controller
             'vehicles.milage',
             'vehicles.engine_displacement',
             'vehicles.first_registration'
-        )->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition', 'fuel']);
+        )
+        ->where('vehicles.status', 1)
+        ->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition', 'fuel']);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -587,7 +589,6 @@ class SearchController extends Controller
     public function getFilteredSearch()
     {
         $user = auth('sanctum')->user();
-
         if (!$user) {
             return $this->error('Unauthorized', 401);
         }
@@ -598,7 +599,7 @@ class SearchController extends Controller
                 $query->where('status', 1);
             })
             ->latest()
-            ->first();    
+            ->first();
 
         if (!$lastSearch) {
             return $this->success(null, 'No search history found', 200);

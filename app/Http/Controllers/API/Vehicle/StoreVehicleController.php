@@ -49,7 +49,7 @@ class StoreVehicleController extends Controller
         // convertPrice(amount, fromCode, toCode)
         $priceInBaseCurrency = convertPrice($priceInUserCurrency, $userCurrency->code, $baseCurrency->code);
 
-        // try {
+        try {
             $vehicle = Vehicle::create(array_merge(
                 $request->only([
                     'category_id',
@@ -178,10 +178,10 @@ class StoreVehicleController extends Controller
             ));
 
             return $this->success($vehicle, 'Vehicle added successfully!', 200);
-        // } catch (\Exception $e) {
-        //     \Log::error('Vehicle store error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-        //     return $this->error([], 'Something went wrong', 200);
-        // }
+        } catch (\Exception $e) {
+            \Log::error('Vehicle store error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return $this->error([], 'Something went wrong', 200);
+        }
     }
 
     public function show(Request $request)

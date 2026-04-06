@@ -99,7 +99,6 @@ class GetVehicleController extends Controller
         }
 
         $language = $request->query('language');
-
         $withTranslation = function($q) use ($language) {
             if ($language) {
                 $q->with(['translations' => fn($t) => $t->where('language', $language)]);
@@ -110,16 +109,21 @@ class GetVehicleController extends Controller
             'vehicles.id', 'vehicles.category_id', 'vehicles.brand_id', 'vehicles.model_id',
             'vehicles.body_type_id', 'vehicles.sub_model_id', 'vehicles.power_id',
             'vehicles.price', 'vehicles.price_in_base', 'vehicles.currency_id',
-            'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id'
+            'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id',
+            'vehicles.fuel_id', 'vehicles.transmission_id'
         )
         ->with([
-            'power',
-            'category'  => $withTranslation,
-            'brand'     => $withTranslation,
-            'model'     => $withTranslation,
-            'body_type' => $withTranslation,
-            'subModel'  => $withTranslation,
-            'photos', 'contactInfo', 'data.condition', 'currency', 'baseCurrency'
+            'category'      => $withTranslation,
+            'brand'         => $withTranslation,
+            'model'         => $withTranslation,
+            'subModel'      => $withTranslation,
+            'fuel'          => $withTranslation,
+            'body_type'     => $withTranslation,
+            'transmission'  => $withTranslation,
+            'equipment_line'=> $withTranslation,
+            'seller_type'   => $withTranslation,
+            'currency', 'baseCurrency',
+            'photos', 'contactInfo', 'data.condition', 'currency', 'power', 'baseCurrency'
         ])
         ->where('status', 1)
         ->where('user_id', $user->id)
@@ -422,13 +426,11 @@ class GetVehicleController extends Controller
     public function getVehiclesByUserId(Request $request)
     {
         $targetUserId = $request->query('user_id') ?? auth()->id();
-
         if (!$targetUserId) {
             return $this->error([], 'User ID is required or you must be logged in.', 401);
         }
 
         $language = $request->query('language');
-
         $withTranslation = function($q) use ($language) {
             if ($language) {
                 $q->with(['translations' => fn($t) => $t->where('language', $language)]);
@@ -439,17 +441,23 @@ class GetVehicleController extends Controller
             'vehicles.id', 'vehicles.category_id', 'vehicles.brand_id', 'vehicles.model_id',
             'vehicles.body_type_id', 'vehicles.sub_model_id', 'vehicles.power_id',
             'vehicles.price', 'vehicles.price_in_base', 'vehicles.currency_id',
-            'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id'
+            'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id',
+            'vehicles.fuel_id', 'vehicles.transmission_id'
         )
         ->with([
-            'power',
-            'category'  => $withTranslation,
-            'brand'     => $withTranslation,
-            'model'     => $withTranslation,
-            'body_type' => $withTranslation,
-            'subModel'  => $withTranslation,
-            'photos', 'contactInfo', 'data.condition', 'currency', 'baseCurrency'
+            'category'      => $withTranslation,
+            'brand'         => $withTranslation,
+            'model'         => $withTranslation,
+            'subModel'      => $withTranslation,
+            'fuel'          => $withTranslation,
+            'body_type'     => $withTranslation,
+            'transmission'  => $withTranslation,
+            'equipment_line'=> $withTranslation,
+            'seller_type'   => $withTranslation,
+            'currency', 'baseCurrency',
+            'photos', 'contactInfo', 'data.condition', 'currency', 'power', 'baseCurrency'
         ])
+
         ->where('user_id', $targetUserId)
         ->where('status', 1)
         ->orderBy('created_at', 'desc')

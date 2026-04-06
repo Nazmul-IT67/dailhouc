@@ -36,7 +36,8 @@ class SearchController extends Controller
             'vehicles.price',
             'vehicles.milage',
             'vehicles.engine_displacement',
-            'vehicles.first_registration'
+            'vehicles.first_registration',
+            'vehicles.fuel_id', 'vehicles.transmission_id'
         )
         ->where('vehicles.status', 1)
         ->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition', 'fuel']);

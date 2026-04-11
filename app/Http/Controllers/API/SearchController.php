@@ -24,7 +24,14 @@ class SearchController extends Controller
     // getSearch
     public function index(Request $request)
     {
-        $query = Vehicle::select(
+        $query = Vehicle::where('vehicles.status', 1);
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        $totalFound = $query->count();
+        $vehicles = $query->select(
             'vehicles.id',
             'vehicles.category_id',
             'vehicles.brand_id',
@@ -39,8 +46,46 @@ class SearchController extends Controller
             'vehicles.first_registration',
             'vehicles.fuel_id', 'vehicles.transmission_id'
         )
-        ->where('vehicles.status', 1)
-        ->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'data.condition', 'fuel']);
+        // ->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'fuel'])
+        ->with([
+            'category',
+            'brand' => function($q) use ($request) {
+                $q->withCount(['vehicles' => function($query) use ($request) {
+                    $query->where('status', 1);
+                    if ($request->filled('category_id')) {
+                        $query->where('category_id', $request->category_id);
+                    }
+                }]);
+            },
+            'model' => function($q) use ($request) {
+                $q->withCount(['vehicles' => function($query) use ($request) {
+                    $query->where('status', 1);
+                    if ($request->filled('category_id')) {
+                        $query->where('category_id', $request->category_id);
+                    }
+                }]);
+            },
+            'subModel' => function($q) use ($request) {
+                $q->withCount(['vehicles' => function($query) use ($request) {
+                    $query->where('status', 1);
+                    if ($request->filled('category_id')) {
+                        $query->where('category_id', $request->category_id);
+                    }
+                }]);
+            },
+            'body_type' => function($q) use ($request) {
+            $q->withCount(['vehicles' => function($query) use ($request) {
+                $query->where('status', 1);
+                if ($request->filled('category_id')) {
+                    $query->where('category_id', $request->category_id);
+                }
+            }]);
+        },
+        
+        'photos', 'contactInfo.country', 'contactInfo.city', 'power', 'data.condition', 'transmission', 'fuel'
+        ])
+        ->latest('vehicles.created_at')
+        ->paginate(20);
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -54,6 +99,7 @@ class SearchController extends Controller
             $modelIds = (array) $request->model_id;
             $query->whereIn('model_id', $modelIds);
         }
+        
         if ($request->filled('sub_model_id')) {
             $subModelIds = (array) $request->sub_model_id;
             $query->whereIn('sub_model_id', $subModelIds);

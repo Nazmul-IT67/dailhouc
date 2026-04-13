@@ -17,6 +17,7 @@ class CategorySeeder extends Seeder
         $now = Carbon::now();
 
         $categories = [
+<<<<<<< HEAD
             ['en' => 'Car', 'fr' => 'Voiture'],
             ['en' => 'Motorbike', 'fr' => 'Moto'],
             ['en' => 'Caravan', 'fr' => 'Caravane'],
@@ -42,5 +43,15 @@ class CategorySeeder extends Seeder
                 ],
             ]);
         }
+=======
+            ['name' => 'Car', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Motorbike', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Caravan', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Transporter', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Trail', 'created_at' => $now, 'updated_at' => $now],
+        ];
+
+        DB::table('categories')->insert($categories);
+>>>>>>> 2bdbe6e (first commit)
     }
 }

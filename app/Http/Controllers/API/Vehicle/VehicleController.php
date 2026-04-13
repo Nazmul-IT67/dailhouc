@@ -27,7 +27,10 @@ use App\Models\SellerType;
 use App\Models\Transmission;
 use App\Models\Upholstery;
 use App\Models\Vehicle;
+<<<<<<< HEAD
 use App\Models\ModelYear;
+=======
+>>>>>>> 2bdbe6e (first commit)
 use App\Models\VehicleCondition;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
@@ -36,11 +39,16 @@ use Illuminate\Support\Facades\Auth;
 class VehicleController extends Controller
 {
     use ApiResponse;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 2bdbe6e (first commit)
     // getCategory
     public function getCategory(Request $request)
     {
         $language = $request->query('language', app()->getLocale());
+<<<<<<< HEAD
 
         if ($language == 'fr') {
             $categories = Category::whereHas('translations', function ($q) use ($language) {
@@ -49,6 +57,19 @@ class VehicleController extends Controller
                 $q->where('language', $language);
             }])->get();
         } else {
+=======
+        
+        if ($language == 'fr')
+        {
+            $categories = Category::whereHas('translations', function($q) use ($language)
+            {
+                $q->where('language', $language); 
+            })->with(['translations' => function($q) use ($language) {
+                $q->where('language', $language);
+            }])->get();
+        }
+        else{
+>>>>>>> 2bdbe6e (first commit)
             $categories = Category::all();
         }
 
@@ -67,7 +88,12 @@ class VehicleController extends Controller
             ];
         });
 
+<<<<<<< HEAD
         if ($data->isEmpty()) {
+=======
+        if ($data->isEmpty())
+        {
+>>>>>>> 2bdbe6e (first commit)
             return $this->success([], 'No categories found for this language.', 200);
         }
 
@@ -86,8 +112,13 @@ class VehicleController extends Controller
 
         $brands = Brand::where('category_id', $category_id)
             ->withCount('vehicles')
+<<<<<<< HEAD
             ->when($language, function ($q) use ($language) {
                 $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+=======
+            ->when($language, function($q) use ($language) {
+                $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+>>>>>>> 2bdbe6e (first commit)
             })
             ->get();
 
@@ -99,17 +130,28 @@ class VehicleController extends Controller
             $brands->transform(function ($brand) {
                 if ($brand->translations->isNotEmpty()) {
                     $translation = $brand->translations->first();
+<<<<<<< HEAD
 
                     $brand->name = $translation->name ?? $brand->name;
                 }
 
+=======
+                    
+                    $brand->name = $translation->name ?? $brand->name;
+                }
+                
+>>>>>>> 2bdbe6e (first commit)
                 return $brand->makeHidden('translations');
             });
         }
 
         return $this->success($brands, 'Brands fetched successfully', 200);
     }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 2bdbe6e (first commit)
     // getModelsByBrand
     public function getModelsByBrand(Request $request)
     {
@@ -122,8 +164,13 @@ class VehicleController extends Controller
 
         $models = CarModel::where('brand_id', $brand_id)
             ->withCount('vehicles')
+<<<<<<< HEAD
             ->when($language, function ($q) use ($language) {
                 $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+=======
+            ->when($language, function($q) use ($language) {
+                $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+>>>>>>> 2bdbe6e (first commit)
             })
             ->get();
 
@@ -148,12 +195,17 @@ class VehicleController extends Controller
     public function getSubModelsByModel(Request $request)
     {
         $car_model_id = $request->car_model_id;
+<<<<<<< HEAD
         $language = $request->query('language', 'en');
+=======
+        $language = $request->query('language', app()->getLocale());
+>>>>>>> 2bdbe6e (first commit)
 
         if (!$car_model_id) {
             return $this->error([], 'Car Model ID is required', 400);
         }
 
+<<<<<<< HEAD
         $carModel = CarModel::with(['subModels.translations' => function ($q) use ($language) {
             $q->where('language', $language);
         }, 'translations' => function ($q) use ($language) {
@@ -161,11 +213,17 @@ class VehicleController extends Controller
         }])
             ->withCount('vehicles')
             ->find($car_model_id);
+=======
+        $carModel = CarModel::with(['subModels', 'translations' => function($q) use ($language) {
+            $q->withCount('vehicles')->where('language', $language);
+        }])->find($car_model_id);
+>>>>>>> 2bdbe6e (first commit)
 
         if (!$carModel) {
             return $this->error([], 'Car Model not found', 404);
         }
 
+<<<<<<< HEAD
         $subModels = $carModel->subModels->map(function ($subModel) {
             return [
                 'id'           => $subModel->id,
@@ -181,18 +239,29 @@ class VehicleController extends Controller
             'total_vehicles' => $carModel->vehicles_count,
             'sub_models'     => $subModels
         ], 'SubModels fetched successfully', 200);
+=======
+        if ($carModel->subModels->isEmpty()) {
+            return $this->success([], 'No SubModels for this Car Model', 200);
+        }
+
+        return $this->success($carModel->subModels, 'SubModels fetched successfully', 200);
+>>>>>>> 2bdbe6e (first commit)
     }
 
     // getModelsWithSubModelsByBrand
     public function getModelsWithSubModelsByBrand(Request $request)
     {
         $brand_id = $request->brand_id;
+<<<<<<< HEAD
         $language = $request->query('language');
+=======
+>>>>>>> 2bdbe6e (first commit)
 
         if (!$brand_id) {
             return $this->error([], 'Brand ID is required', 400);
         }
 
+<<<<<<< HEAD
         // Fetch models with nested submodels and translations
         $models = CarModel::where('brand_id', $brand_id)
             ->withCount('vehicles')
@@ -208,12 +277,29 @@ class VehicleController extends Controller
                     'subModels.translations' => fn ($st) => $st->where('language', $language)
                 ]);
             })
+=======
+        // Check if brand exists
+        $brand = Brand::find($brand_id);
+        if (!$brand) {
+            return $this->error([], 'Brand not found', 404);
+        }
+
+        // Fetch all models with their submodels and vehicles count
+        $models = CarModel::with([
+                'subModels' => function ($q) {
+                    $q->withCount('vehicles'); // submodel vehicles count
+                }
+            ])
+            ->withCount('vehicles') // model vehicles count
+            ->where('brand_id', $brand_id)
+>>>>>>> 2bdbe6e (first commit)
             ->get();
 
         if ($models->isEmpty()) {
             return $this->success([], 'No Models or SubModels for this Brand', 200);
         }
 
+<<<<<<< HEAD
         // Data transform kora apnar style onusare
         if ($language) {
             $models->transform(function ($model) {
@@ -236,6 +322,8 @@ class VehicleController extends Controller
             });
         }
 
+=======
+>>>>>>> 2bdbe6e (first commit)
         return $this->success($models, 'Models and SubModels fetched successfully', 200);
     }
 
@@ -244,16 +332,26 @@ class VehicleController extends Controller
     {
         $language = $request->query('language');
 
+<<<<<<< HEAD
         $data = VehicleCondition::when($language, function ($q) use ($language) {
             $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
         })
+=======
+        $data = VehicleCondition::when($language, function($q) use ($language) {
+                $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })
+>>>>>>> 2bdbe6e (first commit)
             ->orderBy('name')
             ->get();
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Vehicle Conditions found', 200);
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 2bdbe6e (first commit)
         if ($language) {
             $data->transform(function ($item) {
                 if ($item->translations->isNotEmpty()) {
@@ -271,6 +369,7 @@ class VehicleController extends Controller
     public function getBodyColors(Request $request)
     {
         $language = $request->query('language');
+<<<<<<< HEAD
         $categoryId = $request->query('category_id');
 
         $data = BodyColor::when($language, function ($q) use ($language) {
@@ -287,17 +386,34 @@ class VehicleController extends Controller
             }])
             ->orderBy('id')
             ->get();
+=======
+
+        $data = BodyColor::when($language, function($q) use ($language) {
+                $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('name')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Body Color found', 200);
         }
 
+<<<<<<< HEAD
         foreach ($data as $item) {
             if ($language && $item->translations->isNotEmpty()) {
                 $translation = $item->translations->first();
                 $item->name = $translation->name ?? $item->name;
             }
             $item->makeHidden('translations');
+=======
+        if ($language) {
+            $data->transform(function ($item) {
+                if ($item->translations->isNotEmpty()) {
+                    $translation = $item->translations->first();
+                    $item->name = $translation->name ?? $item->name;
+                }
+                return $item->makeHidden('translations');
+            });
+>>>>>>> 2bdbe6e (first commit)
         }
 
         return $this->success($data, 'Body Colors fetched successfully', 200);
@@ -307,6 +423,7 @@ class VehicleController extends Controller
     public function getUpholsteries(Request $request)
     {
         $language = $request->query('language');
+<<<<<<< HEAD
         $categoryId = $request->query('category_id');
 
         $data = Upholstery::when($language, function ($q) use ($language) {
@@ -323,11 +440,18 @@ class VehicleController extends Controller
             }])
             ->orderBy('id')
             ->get();
+=======
+
+        $data = Upholstery::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('name')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Upholsteries found', 200);
         }
 
+<<<<<<< HEAD
         $data->transform(function ($item) use ($language) {
             if ($language && $item->translations->isNotEmpty()) {
                 $translation = $item->translations->first();
@@ -335,6 +459,17 @@ class VehicleController extends Controller
             }
             return $item->makeHidden('translations');
         });
+=======
+        if ($language) {
+            $data->transform(function ($item) {
+                if ($item->translations->isNotEmpty()) {
+                    $translation = $item->translations->first();
+                    $item->name = $translation->name ?? $item->name;
+                }
+                return $item->makeHidden('translations');
+            });
+        }
+>>>>>>> 2bdbe6e (first commit)
 
         return $this->success($data, 'Upholsteries fetched successfully', 200);
     }
@@ -343,6 +478,7 @@ class VehicleController extends Controller
     public function getInteriorColors(Request $request)
     {
         $language = $request->query('language');
+<<<<<<< HEAD
         $categoryId = $request->query('category_id');
 
         $data = InteriorColor::when($language, function ($q) use ($language) {
@@ -357,17 +493,35 @@ class VehicleController extends Controller
             }])
             ->orderBy('id')
             ->get();
+=======
+
+        $data = InteriorColor::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('name')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Interior color found', 200);
         }
 
+<<<<<<< HEAD
         $data->transform(function ($item) use ($language) {
             if ($language && $item->translations->isNotEmpty()) {
                 $item->name = $item->translations->first()->name ?? $item->name;
             }
             return $item->makeHidden('translations');
         });
+=======
+        if ($language) {
+            $data->transform(function ($item) {
+                if ($item->translations->isNotEmpty()) {
+                    $translation = $item->translations->first();
+                    $item->name = $translation->name ?? $item->name;
+                }
+                return $item->makeHidden('translations');
+            });
+        }
+>>>>>>> 2bdbe6e (first commit)
 
         return $this->success($data, 'Interior Colors fetched successfully', 200);
     }
@@ -408,9 +562,15 @@ class VehicleController extends Controller
     {
         $language = $request->query('language');
 
+<<<<<<< HEAD
         $data = BedCount::when($language, function ($q) use ($language) {
             $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
         })->orderBy('number')->get();
+=======
+        $data = BedCount::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('number')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Bed Count found', 200);
@@ -434,9 +594,15 @@ class VehicleController extends Controller
     {
         $language = $request->query('language');
 
+<<<<<<< HEAD
         $data = BedType::when($language, function ($q) use ($language) {
             $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
         })->orderBy('name')->get();
+=======
+        $data = BedType::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('name')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No bed type found', 200);
@@ -459,10 +625,17 @@ class VehicleController extends Controller
     public function getDriverTypes(Request $request)
     {
         $language = $request->query('language');
+<<<<<<< HEAD
 
         $data = DriverType::when($language, function ($q) use ($language) {
             $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
         })->orderBy('title')->get();
+=======
+        
+        $data = DriverType::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('title')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Driver Type Found', 200);
@@ -485,6 +658,7 @@ class VehicleController extends Controller
     public function getTransmission(Request $request)
     {
         $language = $request->query('language', app()->getLocale());
+<<<<<<< HEAD
         $categoryId = $request->query('category_id');
 
         $data = Transmission::when($language, function ($q) use ($language) {
@@ -496,11 +670,17 @@ class VehicleController extends Controller
                 }
                 $query->select(\DB::raw('count(distinct(category_id))'));
             }])->orderBy('id')->get();
+=======
+        $data = Transmission::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('title')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Transmission Found', 200);
         }
 
+<<<<<<< HEAD
         $data->transform(function ($item) use ($language) {
             if ($language && $item->translations->isNotEmpty()) {
                 $translation = $item->translations->first();
@@ -508,6 +688,17 @@ class VehicleController extends Controller
             }
             return $item->makeHidden('translations');
         });
+=======
+        if ($language) {
+            $data->transform(function ($item) {
+                if ($item->translations->isNotEmpty()) {
+                    $translation = $item->translations->first();
+                    $item->title = $translation->title ?? $item->title;
+                }
+                return $item->makeHidden('translations');
+            });
+        }
+>>>>>>> 2bdbe6e (first commit)
 
         return $this->success($data, 'Transmission fetched successfully', 200);
     }
@@ -536,10 +727,17 @@ class VehicleController extends Controller
     public function getEmissionClasses(Request $request)
     {
         $language = $request->query('language');
+<<<<<<< HEAD
 
         $data = EmissionClass::when($language, function ($q) use ($language) {
             $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
         })->orderBy('title')->get();
+=======
+        
+        $data = EmissionClass::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('title')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Emission class Found', 200);
@@ -561,6 +759,7 @@ class VehicleController extends Controller
     // getFuelTypes
     public function getFuelTypes(Request $request)
     {
+<<<<<<< HEAD
         $language = $request->query('language');
         $categoryId = $request->query('category_id');
 
@@ -576,14 +775,34 @@ class VehicleController extends Controller
                 $query->select(\DB::raw('count(distinct(category_id))'));
             }])
             ->get();
+=======
+        $language = $request->query('language'); 
+        $query = Fuel::query();
+
+        if ($language) {
+            $query->with(['translations' => function($q) use ($language) {
+                $q->where('language', $language);
+            }]);
+        }
+
+        $fuels = $query->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($fuels->isEmpty()) {
             return $this->error([], 'No Fuel Types Found', 200);
         }
 
         foreach ($fuels as $fuel) {
+<<<<<<< HEAD
             if ($language && $fuel->translations->isNotEmpty()) {
                 $fuel->title = $fuel->translations->first()->title ?? $fuel->title;
+=======
+            if ($language) {
+                $translation = $fuel->translations->first();
+                if ($translation) {
+                    $fuel->title = $translation->title;
+                }
+>>>>>>> 2bdbe6e (first commit)
             }
             $fuel->makeHidden('translations');
         }
@@ -598,8 +817,13 @@ class VehicleController extends Controller
 
         $query = BodyType::where('category_id', $request->category_id)
             ->withCount('vehicles')
+<<<<<<< HEAD
             ->when($language, function ($q) use ($language) {
                 $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
+=======
+            ->when($language, function($q) use ($language) {
+                $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+>>>>>>> 2bdbe6e (first commit)
             });
 
         $data = $query->get();
@@ -612,7 +836,11 @@ class VehicleController extends Controller
             $data->transform(function ($item) {
                 if ($item->translations->isNotEmpty()) {
                     $translation = $item->translations->first();
+<<<<<<< HEAD
 
+=======
+                    
+>>>>>>> 2bdbe6e (first commit)
                     if (isset($item->title)) {
                         $item->title = $translation->title ?? $translation->name;
                     }
@@ -634,6 +862,7 @@ class VehicleController extends Controller
             return $this->error([], 'No Power Found', 200);
         }
 
+<<<<<<< HEAD
         $data->transform(function ($power) {
             return [
                 'id'       => $power->id,
@@ -643,6 +872,8 @@ class VehicleController extends Controller
             ];
         });
 
+=======
+>>>>>>> 2bdbe6e (first commit)
         return $this->success($data, 'Power fetched successfully', 200);
     }
 
@@ -654,18 +885,30 @@ class VehicleController extends Controller
         if ($data->isEmpty()) {
             return $this->error([], 'Axle Count Found', 200);
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 2bdbe6e (first commit)
         return $this->success($data, 'Axle Count fetched successfully', 200);
     }
 
     // getEquipmentLine
     public function getEquipmentLine(Request $request)
     {
+<<<<<<< HEAD
         $language = $request->query('language');
 
         $data = EquipmentLine::when($language, function ($q) use ($language) {
             $q->with(['translations' => fn ($t) => $t->where('language', $language)]);
         })->orderBy('title')->get();
+=======
+        $language = $request->query('language'); 
+
+        $data = EquipmentLine::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('title')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Equipment Line Found', 200);
@@ -688,6 +931,7 @@ class VehicleController extends Controller
     public function getSellerTypes(Request $request)
     {
         $language = $request->query('language');
+<<<<<<< HEAD
         $categoryId = $request->query('category_id');
 
         $data = SellerType::when($language, function ($q) use ($language) {
@@ -701,11 +945,18 @@ class VehicleController extends Controller
             }])
             ->orderBy('id')
             ->get();
+=======
+        
+        $data = SellerType::when($language, function($q) use ($language) {
+            $q->with(['translations' => fn($t) => $t->where('language', $language)]);
+            })->orderBy('title')->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($data->isEmpty()) {
             return $this->error([], 'No Seller Types Found', 200);
         }
 
+<<<<<<< HEAD
         $data->transform(function ($item) use ($language) {
             if ($language && $item->translations->isNotEmpty()) {
                 $translation = $item->translations->first();
@@ -713,6 +964,17 @@ class VehicleController extends Controller
             }
             return $item->makeHidden('translations');
         });
+=======
+        if ($language) {
+            $data->transform(function ($item) {
+                if ($item->translations->isNotEmpty()) {
+                    $translation = $item->translations->first();
+                    $item->title = $translation->title ?? $item->title;
+                }
+                return $item->makeHidden('translations');
+            });
+        }
+>>>>>>> 2bdbe6e (first commit)
 
         return $this->success($data, 'Seller Types fetched successfully', 200);
     }
@@ -720,6 +982,7 @@ class VehicleController extends Controller
     // getEquipment
     public function getEquipment(Request $request)
     {
+<<<<<<< HEAD
         $language = $request->query('language');
         $categoryId = $request->query('category_id');
         $search = $request->query('search');
@@ -747,11 +1010,35 @@ class VehicleController extends Controller
             }
             $item->makeHidden('translations');
         }
+=======
+        $query = Equipment::query();
+        $language = $request->query('language'); 
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        $equipment = $query->get();
+>>>>>>> 2bdbe6e (first commit)
 
         if ($equipment->isEmpty()) {
             return $this->error([], 'No Equipment Found', 200);
         }
 
+<<<<<<< HEAD
+=======
+        foreach ($equipment as $data) {
+            if ($language) {
+                $translation = $data->translations->first();
+                if ($translation) {
+                    $data->title = $translation->title;
+                }
+            }
+            $data->makeHidden('translations');
+        }
+
+>>>>>>> 2bdbe6e (first commit)
         return $this->success($equipment, 'Equipment fetched successfully', 200);
     }
 
@@ -796,6 +1083,7 @@ class VehicleController extends Controller
     public function getFavoriteVehicles(Request $request)
     {
         $user = Auth::user();
+<<<<<<< HEAD
         $lang = $request->query('language');
 
         if (!$user) {
@@ -861,4 +1149,44 @@ class VehicleController extends Controller
         return $this->success($years, 'Model years fetched successfully', 200);
     }
 
+=======
+        if (!$user) {
+            return $this->error([], 'Unauthenticated. Please log in to access your vehicles.', 200);
+        }
+
+        // Fetch favorite vehicles with all relationships
+        $vehicles = Vehicle::with([
+            'data.condition',
+            'data.bodyColor',
+            'data.upholstery',
+            'data.interiorColor',
+            'data.previousOwner',
+            'data.numOfDoor',
+            'data.numOfSeats',
+            'photos',
+            'engineAndEnvironment.driverType',
+            'engineAndEnvironment.transmission',
+            'engineAndEnvironment.numOfGears',
+            'engineAndEnvironment.cylinders',
+            'engineAndEnvironment.emissionClass',
+            'conditionAndMaintenance',
+            'category',
+            'brand',
+            'model',
+            'fuel',
+            'body_type',
+            'transmission',
+            'power',
+            'equipment_line',
+            'seller_type',
+        ])
+            ->whereHas('favoritedBy', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return $this->success($vehicles, 'Favorite vehicles fetched successfully', 200);
+    }
+>>>>>>> 2bdbe6e (first commit)
 }

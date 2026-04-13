@@ -25,9 +25,12 @@ class Upholstery extends Model
         }
         return $value;
     }
+<<<<<<< HEAD
 
     public function vehicleData()
     {
         return $this->hasMany(VehicleData::class, 'upholstery_id');
     }
+=======
+>>>>>>> 2bdbe6e (first commit)
 }

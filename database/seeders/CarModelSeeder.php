@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -75,3 +76,46 @@ class carModelSeeder extends Seeder
         }
     }
 }
+=======
+use App\Models\CarModel;
+use App\Models\Brand;
+
+class CarModelSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $brands = Brand::pluck('id', 'name'); // ['Toyota' => 9, ...]
+
+        $carModels = [
+            // Honda Bikes
+            ['name' => 'CBR 1000RR', 'brand_name' => 'Honda'],
+            ['name' => 'CB 500F', 'brand_name' => 'Honda'],
+
+            // Yamaha Bikes
+            ['name' => 'YZF-R1', 'brand_name' => 'Yamaha'],
+            ['name' => 'MT-07', 'brand_name' => 'Yamaha'],
+
+            // BMW Cars
+            ['name' => 'X5', 'brand_name' => 'BMW'],
+            ['name' => 'M3', 'brand_name' => 'BMW'],
+
+            // Toyota Cars
+            ['name' => 'Corolla', 'brand_name' => 'Toyota'],
+            ['name' => 'Camry', 'brand_name' => 'Toyota'],
+
+            // Tesla Cars
+            ['name' => 'Model S', 'brand_name' => 'Tesla'],
+            ['name' => 'Model 3', 'brand_name' => 'Tesla'],
+        ];
+
+        foreach ($carModels as $model) {
+            if (isset($brands[$model['brand_name']])) {
+                CarModel::create([
+                    'name' => $model['name'],
+                    'brand_id' => $brands[$model['brand_name']],
+                ]);
+            }
+        }
+    }
+}
+>>>>>>> 2bdbe6e (first commit)

@@ -5,7 +5,11 @@ namespace App\Http\Controllers\API\Vehicle;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\Vehicle;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
+=======
+use Illuminate\Support\Facades\Auth; // Correct import
+>>>>>>> 2bdbe6e (first commit)
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -32,7 +36,11 @@ class GetVehicleController extends Controller
             'vehicles.base_currency_id', 'vehicles.first_registration'
         )
         ->with([
+<<<<<<< HEAD
             'power', 'category' => $withTranslation, 'brand' => $withTranslation,  'model' => $withTranslation, 'subModel' => $withTranslation, 'body_type' => $withTranslation, 'data.condition' => $withTranslation, 'photos', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'currency', 'baseCurrency'
+=======
+            'power', 'category' => $withTranslation, 'brand' => $withTranslation,  'model' => $withTranslation, 'subModel' => $withTranslation, 'body_type' => $withTranslation, 'data.condition' => $withTranslation, 'photos', 'contactInfo', 'currency', 'baseCurrency'
+>>>>>>> 2bdbe6e (first commit)
         ])->where('status', 1)->orderBy('created_at', 'desc')->paginate(20);
 
         $baseCurrency = Currency::where('is_default', 1)->first() ?? Currency::where('code', 'USD')->first();
@@ -99,6 +107,10 @@ class GetVehicleController extends Controller
         }
 
         $language = $request->query('language');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2bdbe6e (first commit)
         $withTranslation = function($q) use ($language) {
             if ($language) {
                 $q->with(['translations' => fn($t) => $t->where('language', $language)]);
@@ -109,6 +121,7 @@ class GetVehicleController extends Controller
             'vehicles.id', 'vehicles.category_id', 'vehicles.brand_id', 'vehicles.model_id',
             'vehicles.body_type_id', 'vehicles.sub_model_id', 'vehicles.power_id',
             'vehicles.price', 'vehicles.price_in_base', 'vehicles.currency_id',
+<<<<<<< HEAD
             'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id',
             'vehicles.fuel_id', 'vehicles.transmission_id'
         )
@@ -124,6 +137,18 @@ class GetVehicleController extends Controller
             'seller_type'   => $withTranslation,
             'currency', 'baseCurrency',
             'photos', 'contactInfo', 'data.condition', 'currency', 'power', 'baseCurrency'
+=======
+            'vehicles.base_currency_id', 'vehicles.first_registration', 'vehicles.user_id'
+        )
+        ->with([
+            'power',
+            'category'  => $withTranslation,
+            'brand'     => $withTranslation,
+            'model'     => $withTranslation,
+            'body_type' => $withTranslation,
+            'subModel'  => $withTranslation,
+            'photos', 'contactInfo', 'data.condition', 'currency', 'baseCurrency'
+>>>>>>> 2bdbe6e (first commit)
         ])
         ->where('status', 1)
         ->where('user_id', $user->id)
@@ -208,7 +233,11 @@ class GetVehicleController extends Controller
             'transmission' => $withTranslation,
             'equipment_line' => $withTranslation,
             'seller_type' => $withTranslation,
+<<<<<<< HEAD
             'currency', 'baseCurrency', 'fuel', 'engineAndEnvironment.cylinders', 'engineAndEnvironment.numOfGears'
+=======
+            'currency', 'baseCurrency', 'user'
+>>>>>>> 2bdbe6e (first commit)
         ])->find($vehicleId);
 
         if (!$vehicle) {
@@ -265,8 +294,13 @@ class GetVehicleController extends Controller
                 'avatar' => $contact->avatar ?? null,
                 'whatsapp_number' => $contact->is_whatsapp_show ? $contact->whatsapp_number : null,
                 'whatsapp_country_code' => $contact->is_whatsapp_show ? $contact->whatsapp_country_code : null,
+<<<<<<< HEAD
                 'country' => $contact->country?->name,
                 'city' => $contact->city?->name,
+=======
+                'country_id' => $contact->country_id,
+                'city_id' => $contact->city_id,
+>>>>>>> 2bdbe6e (first commit)
                 'postal_code' => $contact->postal_code,
                 'street_details' => $contact->street_details,
                 'lat' => $contact->lat,
@@ -295,12 +329,16 @@ class GetVehicleController extends Controller
     // getPendingAndAllVehicle
     public function getPendingAndAllVehicle(Request $request)
     {
+<<<<<<< HEAD
         $user = Auth::user();
+=======
+>>>>>>> 2bdbe6e (first commit)
         $lang = $request->query('language');
         $withTr = fn($q) => $lang ? $q->with(['translations' => fn($t) => $t->where('language', $lang)]) : null;
 
         $vehicles = Vehicle::with([
             'category' => $withTr, 'brand' => $withTr, 'model' => $withTr,
+<<<<<<< HEAD
             'subModel' => $withTr, 'power', 'photos', 'currency', 'baseCurrency', 'contactInfo', 'contactInfo.country', 'contactInfo.city', 'transmission', 'data.condition', 'fuel'
         ])
         ->withExists(['favoritedBy as is_favorite' => function($q) use ($user) {
@@ -309,6 +347,13 @@ class GetVehicleController extends Controller
         ->where('user_id', $user->id)
         ->whereIn('status', [0, 1])
         ->latest()->paginate(20);
+=======
+            'subModel' => $withTr, 'power', 'photos', 'currency', 'baseCurrency'
+        ])
+        ->whereIn('status', [0, 1])
+        ->latest()
+        ->paginate(20);
+>>>>>>> 2bdbe6e (first commit)
 
         $baseCur = Currency::where('is_default', 1)->first() ?? Currency::where('code', 'USD')->first();
         $viewCur = auth()->user()?->country?->currency ?? $baseCur;
@@ -349,6 +394,7 @@ class GetVehicleController extends Controller
         return $this->success($vehicles, 'Pending and active vehicles fetched successfully', 200);
     }
 
+<<<<<<< HEAD
     // mapTranslations
     private function mapTranslations($vehicle, array $relations)
     {
@@ -387,10 +433,23 @@ class GetVehicleController extends Controller
         ->where('status', 1)
         ->latest()
         ->get();
+=======
+    // getfeatured
+    public function featured(Request $request)
+    {
+        $language = $request->query('language');
+        $withTranslation = fn($q) => $language ? $q->with(['translations' => fn($t) => $t->where('language', $language)]) : null;
+
+        $vehicles = Vehicle::with([
+            'category' => $withTranslation, 'brand' => $withTranslation, 'model' => $withTranslation,
+            'subModel' => $withTranslation, 'power', 'photos', 'currency', 'baseCurrency'
+        ])->where(['is_featured' => 1, 'status' => 1])->latest()->paginate(20);
+>>>>>>> 2bdbe6e (first commit)
 
         $baseCur = Currency::where('is_default', 1)->first() ?? Currency::where('code', 'USD')->first();
         $viewCur = auth()->user()?->country?->currency ?? $baseCur;
 
+<<<<<<< HEAD
         $featuredVehicles->transform(function ($v) use ($baseCur, $viewCur, $lang) {
 
             if ($lang) {
@@ -413,12 +472,31 @@ class GetVehicleController extends Controller
 
             $v->poster_price = number_format($v->price, 2);
             $v->base_price = number_format($v->price_in_base, 2);
+=======
+        $vehicles->getCollection()->transform(function ($v) use ($baseCur, $viewCur, $language) {
+            if ($language) {
+                foreach (['category', 'brand', 'model', 'subModel'] as $rel) {
+                    if ($v->$rel && $v->$rel->translations->isNotEmpty()) {
+                        $tr = $v->$rel->translations->first();
+                        if (isset($v->$rel->title)) $v->$rel->title = $tr->title ?? $tr->name;
+                        $v->$rel->name = $tr->name ?? $tr->title;
+                        $v->$rel->makeHidden('translations');
+                    }
+                }
+            }
+
+            $v->poster_price = number_format($v->price, 2);
+            $v->poster_currency_symbol = $v->currency?->symbol ?? '';
+            $v->base_price = number_format($v->price_in_base, 2);
+            $v->base_currency_symbol = $v->baseCurrency?->symbol ?? '$';
+>>>>>>> 2bdbe6e (first commit)
             $v->viewer_price = number_format(convertPrice($v->price_in_base, $baseCur->code, $viewCur->code), 2);
             $v->viewer_currency_symbol = $viewCur->symbol;
 
             return $v;
         });
 
+<<<<<<< HEAD
         return $this->success($featuredVehicles, 'Featured vehicles fetched successfully', 200);
     }
 
@@ -510,3 +588,9 @@ class GetVehicleController extends Controller
         return $this->success($vehicles, 'User vehicles fetched successfully!', 200);
     }
 }
+=======
+        return $this->success($vehicles, 'Featured vehicles fetched successfully', 200);
+    }
+
+}
+>>>>>>> 2bdbe6e (first commit)

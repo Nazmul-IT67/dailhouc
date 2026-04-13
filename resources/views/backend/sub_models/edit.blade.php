@@ -33,16 +33,29 @@
                             </div>
 
                             <div class="mb-3">
+<<<<<<< HEAD
                                 <label for="name_fr" class="form-label">Sub Model Name (Fr)</label>
                                 <input type="text" name="name_fr" id="name_fr"
                                     class="form-control @error('name_fr') is-invalid @enderror" {{-- Ekhane $subModel hobe, $carModel noy --}}
                                     value="{{ old('name_fr', $subModel->translations->where('language', 'fr')->first()->name ?? '') }}"
                                     placeholder="Enter sub model name in French" required>
 
+=======
+                                <label for="name_fr" class="form-label">Car Model Name (Fr)  </label>
+                                <input type="text" name="name_fr" id="name_fr"
+                                    class="form-control @error('name_fr') is-invalid @enderror"
+                                    value="{{ old('name_fr', $carModel->translations->where('language', 'fr')->first()->name ?? '') }}" 
+                                    placeholder="Enter brand name in French" required>
+                                
+>>>>>>> 2bdbe6e (first commit)
                                 @error('name_fr')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2bdbe6e (first commit)
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary">Update</button>
                                 <a href="{{ route('admin.sub_models.index') }}" class="btn btn-secondary">Cancel</a>

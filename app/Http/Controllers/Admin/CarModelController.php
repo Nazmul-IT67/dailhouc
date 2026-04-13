@@ -38,7 +38,11 @@ class CarModelController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+<<<<<<< HEAD
                 ->addColumn('brand', fn ($data) => $data->brand->name ?? '—')
+=======
+                ->addColumn('brand', fn($data) => $data->brand->name ?? '—')
+>>>>>>> 2bdbe6e (first commit)
                 ->addColumn('name_fr', function ($row) {
                     $translation = $row->translations->where('language', 'fr')->first();
                     return $translation ? $translation->name : '<span class="text-muted">No Translation</span>';
@@ -86,7 +90,11 @@ class CarModelController extends Controller
             $carModel = ($this->model)::create($request->only(['name', 'brand_id']));
 
             $carModel->translations()->create([
+<<<<<<< HEAD
                 'language' => 'fr',
+=======
+                'language' => 'fr', 
+>>>>>>> 2bdbe6e (first commit)
                 'name'     => $request->name_fr,
             ]);
 
@@ -111,15 +119,22 @@ class CarModelController extends Controller
             $carModel = ($this->model)::findOrFail($id);
 
             $validator = Validator::make($request->all(), [
+<<<<<<< HEAD
                 'name_fr'  => 'required|string|max:100',
                 'brand_id' => 'required|exists:brands,id',
                 'name'     => 'required|string|max:100|unique:car_models,name,' . $carModel->id,
+=======
+                'name_fr' => 'required|string|max:100',
+                'brand_id' => 'required|exists:brands,id',
+                'name' => 'required|string|max:100|unique:car_models,name,' . $carModel->id,
+>>>>>>> 2bdbe6e (first commit)
             ]);
 
             if ($validator->fails()) {
                 return back()->with('t-validation', $validator->errors()->all())->withInput();
             }
 
+<<<<<<< HEAD
             // 1. Main table update
             $carModel->update($request->only(['name', 'brand_id']));
 
@@ -138,6 +153,17 @@ class CarModelController extends Controller
 
         } catch (Exception $e) {
             // dd($e->getMessage()); // Debug korar jonno eita check korte paren
+=======
+            $carModel->update($request->only(['name', 'brand_id']));
+            $carModel->translations()->create([
+                'language' => 'fr', 
+                'name'     => $request->name_fr,
+            ]);
+
+            return redirect()->route($this->routeName . 'index')
+                ->with('success', 'Car Model updated successfully.');
+        } catch (Exception $e) {
+>>>>>>> 2bdbe6e (first commit)
             return redirect()->route($this->routeName . 'index')
                 ->with('error', 'Car Model update failed.');
         }

@@ -82,7 +82,11 @@ class CategoryController extends Controller
     // Show edit form
     public function edit($id): View
     {
+<<<<<<< HEAD
         $category = Category::with('translations')->findOrFail($id);
+=======
+        $category = Category::findOrFail($id);
+>>>>>>> 2bdbe6e (first commit)
         return view('backend.categories.edit', compact('category'));
     }
 
@@ -93,7 +97,11 @@ class CategoryController extends Controller
             $category = Category::findOrFail($id);
             $validator = Validator::make($request->all(), [
                 'name'    => 'required|string|max:100|unique:categories,name,' . $category->id,
+<<<<<<< HEAD
                 'name_fr' => 'required|string|max:100',
+=======
+                'name_fr' => 'required|string|max:100', 
+>>>>>>> 2bdbe6e (first commit)
             ]);
 
             if ($validator->fails()) {
@@ -108,12 +116,20 @@ class CategoryController extends Controller
 
             $category->translations()->updateOrCreate(
                 ['language' => 'fr'],
+<<<<<<< HEAD
                 ['name'   => $request->name_fr]
+=======
+                ['name'   => $request->name_fr] 
+>>>>>>> 2bdbe6e (first commit)
             );
 
             return redirect()->route('admin.categories.index')
                 ->with('success', 'Category updated successfully with French translation.');
+<<<<<<< HEAD
 
+=======
+                
+>>>>>>> 2bdbe6e (first commit)
         } catch (\Exception $e) {
             return redirect()->route('admin.categories.index')
                 ->with('error', 'Category update failed: ' . $e->getMessage());

@@ -12,7 +12,10 @@ return new class () extends Migration {
             $table->unsignedBigInteger('num_of_gears_id')->nullable()->change();
             $table->unsignedBigInteger('cylinders_id')->nullable()->change();
             $table->unsignedBigInteger('emission_classes_id')->nullable()->change();
+<<<<<<< HEAD
             $table->unsignedBigInteger('transmission_id')->nullable()->change();
+=======
+>>>>>>> 2bdbe6e (first commit)
         });
     }
 
@@ -23,7 +26,10 @@ return new class () extends Migration {
             $table->unsignedBigInteger('num_of_gears_id')->nullable(false)->change();
             $table->unsignedBigInteger('cylinders_id')->nullable(false)->change();
             $table->unsignedBigInteger('emission_classes_id')->nullable(false)->change();
+<<<<<<< HEAD
             $table->unsignedBigInteger('transmission_id')->nullable(false)->change();
+=======
+>>>>>>> 2bdbe6e (first commit)
         });
     }
 };

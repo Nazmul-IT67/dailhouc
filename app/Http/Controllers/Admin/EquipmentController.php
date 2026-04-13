@@ -61,6 +61,7 @@ class EquipmentController extends Controller
     // Store new equipment
     public function store(Request $request): RedirectResponse
     {
+<<<<<<< HEAD
         // ১. ভ্যালিডেশন-এ title_fr এড করুন
         $request->validate([
             'title'    => 'required|string|max:255|unique:equipment,title',
@@ -88,6 +89,19 @@ class EquipmentController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to add equipment: ' . $e->getMessage())
                 ->withInput();
+=======
+        $request->validate([
+            'title' => 'required|string|max:255|unique:equipment,title',
+        ]);
+
+        try {
+            Equipment::create([
+                'title' => $request->title,
+            ]);
+            return redirect()->route($this->routeName . 'index')->with('success', 'Equipment added successfully!');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Failed to add equipment.');
+>>>>>>> 2bdbe6e (first commit)
         }
     }
 

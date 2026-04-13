@@ -28,6 +28,10 @@ Route::post("login", [AuthController::class, 'login']);
 Route::controller(RegisterController::class)->prefix('users/register')->group(function () {
     // User Register
     Route::post('/', 'userRegister');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2bdbe6e (first commit)
     // Verify OTP
     Route::post('/otp-verify', 'otpVerify');
 
@@ -36,8 +40,13 @@ Route::controller(RegisterController::class)->prefix('users/register')->group(fu
     //email exists check
     Route::post('/email-exists', 'emailExists');
 });
+<<<<<<< HEAD
 
 Route::controller(LoginController::class)->prefix('users/login')->group(function () {
+=======
+Route::controller(LoginController::class)->prefix('users/login')->group(function () {
+
+>>>>>>> 2bdbe6e (first commit)
     // User Login
     Route::post('/', 'userLogin');
 
@@ -53,11 +62,15 @@ Route::controller(LoginController::class)->prefix('users/login')->group(function
     //Reset Password
     Route::post('/reset-password', 'resetPassword');
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2bdbe6e (first commit)
 Route::prefix('location')->controller(LocationController::class)->group(function () {
     Route::get('/countries', 'getCountry');
     Route::get('/cities', 'getCity');
 });
+<<<<<<< HEAD
 
 Route::prefix('/vehicle/search')->controller(SearchController::class)->group(function () {
     Route::get('/', 'index');
@@ -68,11 +81,20 @@ Route::prefix('/vehicle/search')->controller(SearchController::class)->group(fun
     Route::get('/last-filters', 'getFilteredSearch');
 });
 
+=======
+Route::prefix('/vehicle/search')->controller(SearchController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/latest-search', 'latestPopular');
+});
+>>>>>>> 2bdbe6e (first commit)
 Route::prefix('vehicle')->controller(VehicleController::class)->group(function () {
     Route::get('/categories', 'getCategory');
     Route::get('/brands', 'getBrandByCategory');
     Route::get('/models', 'getModelsByBrand');
+<<<<<<< HEAD
     Route::get('/submodels', 'getSubModelsByModel');
+=======
+>>>>>>> 2bdbe6e (first commit)
     Route::get('/models-submodel', 'getModelsWithSubModelsByBrand');
     Route::get('/vehicle-conditions', 'getVehicleConditions');
     Route::get('/vehicle-body-color', 'getBodyColors');
@@ -97,8 +119,11 @@ Route::prefix('vehicle')->controller(VehicleController::class)->group(function (
     Route::get('/seller-types', 'getSellerTypes');
     Route::post('/favorite', 'toggleFavorite');
     Route::get('/favorites', 'getFavoriteVehicles');
+<<<<<<< HEAD
     Route::get('/model-year', 'getModelYears');
     // Route::post('/get-offer-count', 'getOfferCount');
+=======
+>>>>>>> 2bdbe6e (first commit)
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -121,6 +146,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/delete-account', 'deleteAccount');
         Route::post('/logout', 'logoutUser');
     });
+<<<<<<< HEAD
 
     Route::prefix('vehicle')->controller(StoreVehicleController::class)->group(function () {
         Route::post('/store', 'store');
@@ -139,6 +165,29 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+=======
+    Route::prefix('vehicle')->controller(VehicleController::class)->group(function () {
+        Route::get('/submodels', 'getSubModelsByModel');
+    });
+
+    Route::prefix('vehicle')->controller(StoreVehicleController::class)->group(function () {
+        Route::post('/store', 'store');
+    });
+    Route::prefix('vehicle')->controller(GetVehicleController::class)->group(function () {
+        Route::get('/get-all-vehicle', 'getAllVehicles');
+        Route::get('/get-users-vehicle', 'getUsersVehicle');
+        Route::get('/get-vehicle-by-userId', 'getVehiclesByUserId');
+        Route::get('/get-pending-and-all', 'getPendingAndAllVehicle');
+        Route::get('/vehicle-details', 'vehicleDetails');
+        Route::get('/featured', 'featured');
+      
+    });
+
+    Route::prefix('pages')->group(function () {
+        Route::get('/', [DynamicPageController::class, 'index']);   // GET /api/pages
+        Route::get('/{slug}', [DynamicPageController::class, 'show']); // GET /api/pages/{slug}
+    });
+>>>>>>> 2bdbe6e (first commit)
     Route::prefix('vehicle')->controller(VehicleController::class)->group(function () {
         Route::post('/favorite', 'toggleFavorite');
         Route::get('/favorites', 'getFavoriteVehicles');
@@ -163,6 +212,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 });
+<<<<<<< HEAD
 
 Route::prefix('vehicle')->controller(GetVehicleController::class)->group(function () {
     Route::get('/get-vehicle-by-userId', 'getVehiclesByUserId');
@@ -172,3 +222,5 @@ Route::prefix('pages')->group(function () {
     Route::get('/', [DynamicPageController::class, 'index']);   // GET /api/pages
     Route::get('/{slug}', [DynamicPageController::class, 'show']); // GET /api/pages/{slug}
 });
+=======
+>>>>>>> 2bdbe6e (first commit)

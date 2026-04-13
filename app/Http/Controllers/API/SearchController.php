@@ -4,7 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\BodyColor;
+<<<<<<< HEAD
 use App\Models\Category;
+=======
+>>>>>>> 2bdbe6e (first commit)
 use App\Models\Equipment;
 use App\Models\InteriorColor;
 use App\Models\SearchLog;
@@ -15,11 +18,15 @@ use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\DB;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Validator;
+=======
+>>>>>>> 2bdbe6e (first commit)
 
 class SearchController extends Controller
 {
     use ApiResponse;
+<<<<<<< HEAD
 
     // getSearch
     public function index(Request $request)
@@ -36,6 +43,15 @@ class SearchController extends Controller
             'vehicles.category_id',
             'vehicles.brand_id',
             'vehicles.user_id',
+=======
+    public function index(Request $request)
+    {
+        // $query = Vehicle::with(['brand', 'category', 'model', 'subModel', 'data', 'contactInfo', 'photos', 'engineAndEnvironment', 'conditionAndMaintenance']);
+        $query = Vehicle::select(
+            'vehicles.id',
+            'vehicles.category_id',
+            'vehicles.brand_id',
+>>>>>>> 2bdbe6e (first commit)
             'vehicles.model_id',
             'vehicles.body_type_id',
             'vehicles.sub_model_id',
@@ -43,6 +59,7 @@ class SearchController extends Controller
             'vehicles.price',
             'vehicles.milage',
             'vehicles.engine_displacement',
+<<<<<<< HEAD
             'vehicles.first_registration',
             'vehicles.fuel_id', 'vehicles.transmission_id'
         )
@@ -86,6 +103,10 @@ class SearchController extends Controller
         ])
         ->latest('vehicles.created_at')
         ->paginate(20);
+=======
+            'vehicles.first_registration'
+        )->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo', 'power', 'data.condition']);
+>>>>>>> 2bdbe6e (first commit)
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -99,7 +120,10 @@ class SearchController extends Controller
             $modelIds = (array) $request->model_id;
             $query->whereIn('model_id', $modelIds);
         }
+<<<<<<< HEAD
         
+=======
+>>>>>>> 2bdbe6e (first commit)
         if ($request->filled('sub_model_id')) {
             $subModelIds = (array) $request->sub_model_id;
             $query->whereIn('sub_model_id', $subModelIds);
@@ -182,6 +206,11 @@ class SearchController extends Controller
             }
         );
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 2bdbe6e (first commit)
         if ($request->filled('first_registration_from') && $request->filled('first_registration_to')) {
             $query->whereBetween('first_registration', [$request->first_registration_from, $request->first_registration_to]);
         } elseif ($request->filled('first_registration_from')) {
@@ -435,12 +464,22 @@ class SearchController extends Controller
 
         if ($user = auth('sanctum')->user()) {
 
+<<<<<<< HEAD
             $cleanArray = function ($array) use (&$cleanArray) {
                 foreach ($array as $key => &$value) {
                     if (is_array($value)) {
                         $value = $cleanArray($value);
                     }
 
+=======
+            // ১. একটি ইন্টারনাল ফাংশন যা অ্যারের ভেতর পর্যন্ত ক্লিন করবে
+            $cleanArray = function ($array) use (&$cleanArray) {
+                foreach ($array as $key => &$value) {
+                    if (is_array($value)) {
+                        $value = $cleanArray($value); // অ্যারের ভেতর আবার চেক করবে
+                    }
+                    // যদি ভ্যালু null, খালি অ্যারে [], অথবা খালি স্ট্রিং হয় তবে তা রিমুভ করো
+>>>>>>> 2bdbe6e (first commit)
                     if (is_null($value) || (is_array($value) && empty($value)) || $value === '') {
                         unset($array[$key]);
                     }
@@ -491,8 +530,27 @@ class SearchController extends Controller
                 ]
             ];
 
+<<<<<<< HEAD
         }
 
+=======
+            // ২. ডেটাবেসে ক্লিন করা ফিল্টারটি সেভ করুন
+            UserSearchLog::create([
+                'user_id'       => $user->id,
+                'filters'       => $cleanArray($logFilters), // এখানে ক্লিন ফাংশনটি কল করা হয়েছে
+                'results_count' => $vehicles->total(),
+                'ip_address'    => $request->ip(),
+            ]);
+        }
+
+        foreach ($vehicles as $vehicle) {
+            SearchLog::create([
+                'vehicle_id' => $vehicle->id,
+                'user_id' => auth()->id() ?? null,
+                'searched_at' => now(),
+            ]);
+        }
+>>>>>>> 2bdbe6e (first commit)
         if ($vehicles->isEmpty()) {
             return $this->success([
                 'filters'  => [],
@@ -566,7 +624,11 @@ class SearchController extends Controller
 
             'bed_type' => $bedTypeNames ?? null,
 
+<<<<<<< HEAD
             // Request value precedence
+=======
+            // ✅ Request value precedence
+>>>>>>> 2bdbe6e (first commit)
             'axle_count' => $request->filled('axle_count_id')
                 ? $request->axle_count_id
                 : null,
@@ -575,17 +637,62 @@ class SearchController extends Controller
                 ? $request->perm_gvw
                 : null,
         ];
+<<<<<<< HEAD
+=======
+        // if ($user = auth('sanctum')->user()) {
+        //     UserSearchLog::create([
+        //         'user_id'       => $user->id,
+        //         'filters'       => $request->except(['page']),
+        //         'results_count' => $vehicles->total(),
+        //         'ip_address'    => $request->ip(),
+        //     ]);
+        // }
+
+>>>>>>> 2bdbe6e (first commit)
 
         return $this->success([
             'filters'  => $filters,
             'vehicles' => $vehicles,
         ], 'Vehicle Fetched Successfully', 200);
     }
+<<<<<<< HEAD
 
     // latestPopular
     public function latestPopular(Request $request)
     {
         $user = auth('sanctum')->user();
+=======
+    // public function latestPopular(Request $request)
+    // {
+    //     $vehicles = Vehicle::select(
+    //         'vehicles.id',
+    //         'vehicles.category_id',
+    //         'vehicles.brand_id',
+    //         'vehicles.model_id',
+    //         'vehicles.body_type_id',
+    //         'vehicles.sub_model_id',
+    //         'vehicles.power_id',
+    //         'vehicles.price',
+    //         'vehicles.first_registration'
+    //     )
+    //         ->with(['category', 'brand', 'model', 'subModel', 'body_type', 'photos', 'contactInfo', 'power', 'data.condition']) // eager load relations
+    //         ->leftJoin('search_logs', 'vehicles.id', '=', 'search_logs.vehicle_id')
+    //         ->groupBy('vehicles.id')
+    //         ->orderByDesc(DB::raw('COUNT(search_logs.id)')) // search count
+    //         ->orderByDesc(DB::raw('MAX(search_logs.searched_at)')) // latest search
+    //         ->paginate(20);
+
+    //     $totalVehicles = $vehicles->total();
+
+    //     return $this->success([
+    //         'total' => $totalVehicles,
+    //         'data' => $vehicles->items()
+    //     ], 'Vehicles fetched successfully', 200);
+    // }
+    public function latestPopular(Request $request)
+    {
+        // Step 1: Aggregate search logs (popularity data)
+>>>>>>> 2bdbe6e (first commit)
         $popular = DB::table('search_logs')
             ->select(
                 'vehicle_id',
@@ -594,6 +701,10 @@ class SearchController extends Controller
             )
             ->groupBy('vehicle_id');
 
+<<<<<<< HEAD
+=======
+        // Step 2: Join with vehicles table + eager load relationships
+>>>>>>> 2bdbe6e (first commit)
         $vehicles = Vehicle::select('vehicles.*')
             ->leftJoinSub($popular, 'pop', function ($join) {
                 $join->on('vehicles.id', '=', 'pop.vehicle_id');
@@ -609,6 +720,7 @@ class SearchController extends Controller
                 'contactInfo.country',
                 'contactInfo.city',
                 'power',
+<<<<<<< HEAD
                 'data.condition',
                 'transmission',
                 'fuel',
@@ -618,11 +730,19 @@ class SearchController extends Controller
                 $q->where('user_id', $user?->id);
             }])
             ->where('vehicles.status', 1)
+=======
+                'data.condition'
+            ])
+>>>>>>> 2bdbe6e (first commit)
             ->orderByDesc(DB::raw('COALESCE(pop.search_count, 0)'))
             ->orderByDesc('pop.last_search')
             ->paginate(20);
 
+<<<<<<< HEAD
         // Step 3: Get total count
+=======
+        // Step 3: Get total count (for frontend pagination)
+>>>>>>> 2bdbe6e (first commit)
         $totalVehicles = $vehicles->total();
 
         // Step 4: Return success response
@@ -631,6 +751,7 @@ class SearchController extends Controller
             'data' => $vehicles->items()
         ], 'Vehicles fetched successfully', 200);
     }
+<<<<<<< HEAD
 
     // getFilteredSearch
     public function getFilteredSearch()
@@ -645,6 +766,18 @@ class SearchController extends Controller
             ->whereHas('vehicle', function($query) {
                 $query->where('status', 1);
             })
+=======
+    public function getFilteredSearch()
+    {
+        $user = auth('sanctum')->user();
+
+        if (!$user) {
+            return $this->error('Unauthorized', 401);
+        }
+
+        // ইউজারের সর্বশেষ সার্চ লগটি নিয়ে আসা
+        $lastSearch = UserSearchLog::where('user_id', $user->id)
+>>>>>>> 2bdbe6e (first commit)
             ->latest()
             ->first();
 
@@ -652,6 +785,7 @@ class SearchController extends Controller
             return $this->success(null, 'No search history found', 200);
         }
 
+<<<<<<< HEAD
         $contact = null;
         if ($lastSearch->contactInfo) {
             $contact = $lastSearch->contactInfo;
@@ -1223,3 +1357,15 @@ class SearchController extends Controller
     }
 
 }
+=======
+        // যদি filters কলামটি JSON হিসেবে সেভ থাকে এবং মডেলে Cast করা থাকে,
+        // তবে এটি সরাসরি অ্যারে হিসেবে আসবে।
+        return $this->success([
+            'log_id'           => $lastSearch->id,
+            'last_searched_at' => $lastSearch->created_at->diffForHumans(),
+            'results_found'    => $lastSearch->results_count,
+            'filters'          => $lastSearch->filters, // এখানে এখন ID এবং Name দুইটাই আছে
+        ], 'Last search filters fetched successfully');
+    }
+}
+>>>>>>> 2bdbe6e (first commit)

@@ -2,9 +2,15 @@
 
 namespace Database\Seeders;
 
+<<<<<<< HEAD
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+=======
+use App\Models\BodyColor;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+>>>>>>> 2bdbe6e (first commit)
 
 class BodyColorSeeder extends Seeder
 {
@@ -13,6 +19,7 @@ class BodyColorSeeder extends Seeder
      */
     public function run(): void
     {
+<<<<<<< HEAD
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('body_colors')->truncate();
         
@@ -48,3 +55,27 @@ class BodyColorSeeder extends Seeder
         }
     }
 }
+=======
+        $colors = [
+            'White',
+            'Black',
+            'Silver',
+            'Gray',
+            'Blue',
+            'Red',
+            'Green',
+            'Yellow',
+            'Brown',
+            'Orange',
+            'Gold',
+            'Purple',
+        ];
+
+        foreach ($colors as $color) {
+            BodyColor::create([
+                'name' => $color,
+            ]);
+        }
+    }
+}
+>>>>>>> 2bdbe6e (first commit)

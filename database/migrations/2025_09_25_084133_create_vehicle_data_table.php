@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('vehicle_data', function (Blueprint $table) {
             $table->id();
+<<<<<<< HEAD
             $table->unsignedBigInteger('vehicle_id');
             
             $table->unsignedBigInteger('vehicle_conditions_id')->nullable();
@@ -22,10 +23,24 @@ return new class extends Migration
             $table->unsignedBigInteger('previous_owner_id')->nullable();
             $table->unsignedBigInteger('num_of_door_id')->nullable();
             $table->unsignedBigInteger('num_of_seats_id')->nullable();
+=======
+            $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('cascade');
+            $table->foreignId('vehicle_conditions_id')->constrained('vehicle_conditions')->onDelete('cascade');
+            $table->foreignId('body_color_id')->constrained('body_colors')->onDelete('cascade');
+            $table->foreignId('upholstery_id')->constrained('upholsteries')->onDelete('cascade');
+            $table->foreignId('interior_color_id')->constrained('interior_colors')->onDelete('cascade');
+            $table->foreignId('previous_owner_id')->constrained('previous_owners')->onDelete('cascade');
+            $table->foreignId('num_of_door_id')->constrained('number_of_doors')->onDelete('cascade');
+            $table->foreignId('num_of_seats_id')->constrained('number_of_seats')->onDelete('cascade');
+>>>>>>> 2bdbe6e (first commit)
 
             $table->boolean('metalic')->default(0);
             $table->boolean('negotiable')->default(0);
             $table->boolean('indicate_vat')->default(0);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2bdbe6e (first commit)
             $table->timestamps();
         });
     }

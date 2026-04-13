@@ -22,12 +22,20 @@
                             </div>
 
                             <div class="mb-3">
+<<<<<<< HEAD
                                 <label for="number_fr" class="form-label">Number of Beds (Fr)</label>
                                 <input type="text" name="number_fr" id="number_fr"
                                     class="form-control @error('number_fr') is-invalid @enderror" {{-- .title er bodole .number hobe --}}
                                     value="{{ old('number_fr', $bedCount->translations->where('language', 'fr')->first()->number ?? '') }}"
                                     placeholder="Entrez le nombre en français">
 
+=======
+                                <label for="number_fr" class="form-label">Emission Class Title (Fr) </label>
+                                <input type="text" name="number_fr" id="number_fr"
+                                    class="form-control @error('number_fr') is-invalid @enderror"
+                                    value="{{ old('number_fr', $bedCount->translations->where('language', 'fr')->first()->title ?? '') }}">
+                                
+>>>>>>> 2bdbe6e (first commit)
                                 @error('number_fr')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

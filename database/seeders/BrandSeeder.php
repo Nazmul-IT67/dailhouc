@@ -12,6 +12,7 @@ class BrandSeeder extends Seeder
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+<<<<<<< HEAD
         DB::table('car_models')->truncate(); 
         DB::table('brands')->truncate();
         DB::table('brand_translations')->truncate();
@@ -76,6 +77,30 @@ class BrandSeeder extends Seeder
                     'name'     => $brandData['name'],
                 ]);
             }
+=======
+        CarModel::truncate();
+        Brand::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        $brands = [
+            // Bikes
+            ['name' => 'Honda', 'category_id' => 3],
+            ['name' => 'Yamaha', 'category_id' => 3],
+            ['name' => 'Harley-Davidson', 'category_id' => 3],
+
+            // Cars
+            ['name' => 'Lamborghini', 'category_id' => 2],
+            ['name' => 'Porsche', 'category_id' => 2],
+            ['name' => 'Ferrari', 'category_id' => 2],
+            ['name' => 'Audi', 'category_id' => 2],
+            ['name' => 'BMW', 'category_id' => 2],
+            ['name' => 'Toyota', 'category_id' => 2],
+            ['name' => 'Tesla', 'category_id' => 2],
+        ];
+
+        foreach ($brands as $brand) {
+            Brand::create($brand);
+>>>>>>> 2bdbe6e (first commit)
         }
     }
 }

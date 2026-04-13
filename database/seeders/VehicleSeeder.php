@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class VehicleSeeder extends Seeder
 {
+<<<<<<< HEAD
     // public function run(): void
     // {
     //     for ($i = 1; $i <= 5; $i++) {
@@ -48,6 +49,17 @@ class VehicleSeeder extends Seeder
                 'brand_id'            => $i,
                 'model_id'            => $i,
                 'sub_model_id'        => $i,
+=======
+    public function run(): void
+    {
+        for ($i = 1; $i <= 5; $i++) {
+            Vehicle::create([
+                'engine_displacement' => '2.0L Turbo',
+                'category_id'         => 1,
+                'brand_id'            => 2,
+                'model_id'            => 4,
+                'sub_model_id'        => 5,
+>>>>>>> 2bdbe6e (first commit)
                 'first_registration'  => '2023-01-15',
                 'body_type_id'        => 1,
                 'fuel_id'             => 1,
@@ -59,7 +71,11 @@ class VehicleSeeder extends Seeder
                 'price_in_base'       => 25000.00,
                 'currency_id'         => 1,
                 'milage'              => 5000.50,
+<<<<<<< HEAD
                 'description'         => 'Excellent condition vehicle ' . $i . ' with low mileage.',
+=======
+                'description'         => 'Excellent condition vehicle with low mileage.',
+>>>>>>> 2bdbe6e (first commit)
                 'featured_request'    => 1,
                 'is_featured'         => 1,
                 'equipment_ids'       => [1, 2, 3],
@@ -67,6 +83,7 @@ class VehicleSeeder extends Seeder
                 'status'              => 1,
                 'base_currency_id'    => 1,
             ]);
+<<<<<<< HEAD
 
             \App\Models\VehiclePhoto::create([
                 'vehicle_id' => $vehicle->id,
@@ -99,6 +116,8 @@ class VehicleSeeder extends Seeder
                 'is_number_show' => 1,
                 'is_whatsapp_show' => 1,
             ]);
+=======
+>>>>>>> 2bdbe6e (first commit)
         }
     }
 }

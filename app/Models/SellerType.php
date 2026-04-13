@@ -25,9 +25,12 @@ class SellerType extends Model
         }
         return $value; 
     }
+<<<<<<< HEAD
 
     public function vehicles()
     {
         return $this->hasMany(Vehicle::class, 'seller_type_id');
     }
+=======
+>>>>>>> 2bdbe6e (first commit)
 }

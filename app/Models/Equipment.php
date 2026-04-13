@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+=======
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+>>>>>>> 2bdbe6e (first commit)
 
 class Equipment extends Model
 {
@@ -25,9 +30,12 @@ class Equipment extends Model
         }
         return $value; 
     }
+<<<<<<< HEAD
 
     public function vehicles()
     {
         return $this->hasMany(Vehicle::class, 'equipment_id');
     }
+=======
+>>>>>>> 2bdbe6e (first commit)
 }

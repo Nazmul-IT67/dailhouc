@@ -24,11 +24,16 @@
 
                             <div class="mb-3">
                                 <label for="name_fr" class="form-label">French Category Name</label>
+<<<<<<< HEAD
                                 @php
                                     // Jodi table-e 'locale' column thake
                                     $fr_translation = $category->translations->where('language', 'fr')->first();
                                     // Jodi table-e 'idlanguagename' ba 'language_id' thake, tobe niche 'locale' er bodole seta likhun
                                     $fr_name = $fr_translation ? $fr_translation->name : '';
+=======
+                                @php 
+                                    $fr_name = $category->translations->where('locale', 'fr')->first()->name ?? ''; 
+>>>>>>> 2bdbe6e (first commit)
                                 @endphp
                                 <input type="text" name="name_fr" id="name_fr" class="form-control"
                                     value="{{ old('name_fr', $fr_name) }}" required>

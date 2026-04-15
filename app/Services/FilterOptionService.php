@@ -36,7 +36,7 @@ class FilterOptionService
             'bed_type_id'     => $this->repo->getBedType($request),
             'upholstery_id'   => $this->repo->getUpholstery($request),
             'equipment_ids'   => $this->repo->getEquipment($request),
-            'seller_type_id ' => $this->repo->getSeller($request),
+            'seller_type_id'  => $this->repo->getSeller($request),
         ];
     }
 }

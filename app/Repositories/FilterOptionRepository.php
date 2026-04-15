@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\{
     Brand, CarModel, SubModel, BodyType, Fuel, Transmission,
     BodyColor, InteriorColor, Upholstery, Equipment, BedType,
-    Category, Vehicle
+    Category, Vehicle, SellerType
 };
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,8 +47,29 @@ class FilterOptionRepository
         if (!in_array('interior_color_id', $exclude) && $request->filled('interior_color_id')) {
             $query->whereHas('data', fn ($q) => $q->whereIn('interior_color_id', (array) $request->interior_color_id));
         }
-        if (!in_array('interior_color_id', $exclude) && $request->filled('interior_color_id')) {
-            $query->whereHas('data', fn ($q) => $q->whereIn('interior_color_id', (array) $request->interior_color_id));
+        if (!in_array('upholstery_id', $exclude) && $request->filled('upholstery_id')) {
+            $query->whereHas('data', fn ($q) => $q->whereIn('upholstery_id', (array) $request->upholstery_id));
+        }
+        if (!in_array('seller_type_id', $exclude) && $request->filled('seller_type_id')) {
+            $query->whereIn('seller_type_id', (array) $request->seller_type_id);
+        }
+
+        if (!in_array('bed_type_id', $exclude) && $request->filled('bed_type_id')) {
+            $query->whereHas('data', function($q) use ($request) {
+                $q->where(function($inner) use ($request) {
+                    foreach ((array) $request->bed_type_id as $id) {
+                        $inner->orWhereRaw('JSON_CONTAINS(bed_type_id, ?)', [json_encode((int)$id)]);
+                    }
+                });
+            });
+        }
+
+        if (!in_array('equipment_ids', $exclude) && $request->filled('equipment_ids')) {
+            $query->where(function($q) use ($request) {
+                foreach ((array) $request->equipment_ids as $id) {
+                    $q->orWhereJsonContains('vehicles.equipment_ids', (int)$id);
+                }
+            });
         }
 
         return $query;
@@ -244,24 +265,48 @@ class FilterOptionRepository
     }
 
     /**
-     * Interior Colors — depends on: all above filters
+     * Bed Type — depends on: all above filters
      */
     public function getBedType(Request $request): array
     {
         $counts = $this->baseQuery($request, ['bed_type_id'])
             ->join('vehicle_data', 'vehicle_data.vehicle_id', '=', 'vehicles.id')
-            ->selectRaw('vehicle_data.bed_type_id, count(*) as total')
+            ->selectRaw('vehicle_data.bed_type_id as bed_type_id, count(*) as total')
+            ->whereNotNull('vehicle_data.bed_type_id')
             ->groupBy('vehicle_data.bed_type_id')
-            ->pluck('total', 'bed_type_id');
+            ->get();
 
-        return InteriorColor::orderBy('name')
+        return BedType::orderBy('name')
             ->get()
-            ->map(fn ($item) => [
-                'id'       => $item->id,
-                'name'     => $item->name,
-                'count'    => $counts->get($item->id, 0),
-                'selected' => in_array($item->id, (array) $request->interior_color_id),
-            ])->toArray();
+            ->map(function ($item) use ($counts, $request) {
+                return [
+                    'id'       => $item->id,
+                    'name'     => $item->name,
+                    'count'    => $this->parseBedTypeJsonCount($counts, $item->id),
+                    'selected' => in_array($item->id, (array) $request->bed_type_id),
+                ];
+            })->toArray();
+    }
+
+    /**
+     * Bed Type JSON
+     */
+    private function parseBedTypeJsonCount($counts, $id)
+    {
+        $total = 0;
+        foreach ($counts as $row) {
+            $bedTypeIds = $row->bed_type_id;
+            if (is_string($bedTypeIds)) {
+                $bedTypeIds = json_decode($bedTypeIds, true);
+            }
+
+            if (is_array($bedTypeIds)) {
+                if (in_array((string)$id, array_map('strval', $bedTypeIds))) {
+                    $total += $row->total;
+                }
+            }
+        }
+        return $total;
     }
 
     /**
@@ -275,7 +320,7 @@ class FilterOptionRepository
             ->groupBy('vehicle_data.upholstery_id')
             ->pluck('total', 'upholstery_id');
 
-        return Upholstery::orderBy('name')
+        return InteriorColor::orderBy('name')
             ->get()
             ->map(fn ($item) => [
                 'id'       => $item->id,
@@ -288,42 +333,62 @@ class FilterOptionRepository
     /**
      * Interior Colors — depends on: all above filters
      */
-    public function getEquipment(Request $request): array
+    public function getSeller(Request $request): array
     {
-        $counts = $this->baseQuery($request, ['equipment_ids'])
-            ->join('vehicle_data', 'vehicle_data.vehicle_id', '=', 'vehicles.id')
-            ->selectRaw('vehicles.equipment_ids, count(*) as total')
-            ->groupBy('vehicles.equipment_ids')
-            ->pluck('total', 'equipment_ids');
+        $counts = $this->baseQuery($request, ['seller_type_id'])
+            ->selectRaw('seller_type_id, count(*) as total')
+            ->groupBy('seller_type_id')
+            ->pluck('total', 'seller_type_id');
 
-        return Equipment::orderBy('title')
+        return SellerType::orderBy('title')
             ->get()
             ->map(fn ($item) => [
                 'id'       => $item->id,
-                'title'    => $item->title,
+                'name'     => $item->title,
                 'count'    => $counts->get($item->id, 0),
-                'selected' => in_array($item->id, (array) $request->equipment_ids),
+                'selected' => in_array($item->id, (array) $request->seller_type_id),
             ])->toArray();
     }
 
     /**
-     * Interior Colors — depends on: all above filters
+     * Equipment — depends on: all above filters
      */
-    public function getSeller(Request $request): array
+    public function getEquipment(Request $request): array
     {
-        $counts = $this->baseQuery($request, ['seller_type_id'])
-            ->join('vehicle_data', 'vehicle_data.vehicle_id', '=', 'vehicles.id')
-            ->selectRaw('vehicles.seller_type_id, count(*) as total')
-            ->groupBy('vehicles.seller_type_id')
-            ->pluck('total', 'seller_type_id');
+        $counts = $this->baseQuery($request, ['equipment_ids'])
+            ->selectRaw('vehicles.equipment_ids, count(*) as total')
+            ->whereNotNull('vehicles.equipment_ids')
+            ->groupBy('vehicles.equipment_ids')
+            ->get();
 
         return Equipment::orderBy('title')
             ->get()
-            ->map(fn ($item) => [
-                'id'       => $item->id,
-                'title'    => $item->title,
-                'count'    => $counts->get($item->id, 0),
-                'selected' => in_array($item->id, (array) $request->seller_type_id),
-            ])->toArray();
+            ->map(function ($item) use ($counts, $request) {
+                return [
+                    'id'       => $item->id,
+                    'name'     => $item->title,
+                    'count'    => $this->parseJsonCount($counts, $item->id),
+                    'selected' => in_array($item->id, (array) $request->equipment_ids),
+                ];
+            })->toArray();
+    }
+
+    private function parseJsonCount($counts, $id)
+    {
+        $total = 0;
+        foreach ($counts as $row) {
+            $equipmentIds = $row->equipment_ids;
+
+            if (!is_array($equipmentIds)) {
+                $equipmentIds = json_decode($equipmentIds, true);
+            }
+
+            if (is_array($equipmentIds)) {
+                if (in_array((string)$id, array_map('strval', $equipmentIds))) {
+                    $total += $row->total;
+                }
+            }
+        }
+        return $total;
     }
 }

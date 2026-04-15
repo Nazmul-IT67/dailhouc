@@ -34,11 +34,7 @@ class SubModelController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-<<<<<<< HEAD
                 ->addColumn('car_model', fn ($data) => $data->carModel->name ?? '—')
-=======
-                ->addColumn('car_model', fn($data) => $data->carModel->name ?? '—')
->>>>>>> 2bdbe6e (first commit)
                 ->addColumn('name_fr', function ($row) {
                     $translation = $row->translations->where('language', 'fr')->first();
                     return $translation ? $translation->name : '<span class="text-muted">No Translation</span>';
@@ -88,11 +84,7 @@ class SubModelController extends Controller
             $subModel = ($this->model)::create($request->only(['car_model_id', 'name']));
 
             $subModel->translations()->create([
-<<<<<<< HEAD
                 'language' => 'fr',
-=======
-                'language' => 'fr', 
->>>>>>> 2bdbe6e (first commit)
                 'name'     => $request->name_fr,
             ]);
 
@@ -119,22 +111,15 @@ class SubModelController extends Controller
             $subModel = ($this->model)::findOrFail($id);
 
             $validator = Validator::make($request->all(), [
-<<<<<<< HEAD
                 'name_fr'      => 'required|string|max:100',
                 'car_model_id' => 'required|exists:car_models,id',
                 'name'         => 'required|string|max:100|unique:sub_models,name,' . $subModel->id,
-=======
-                'name_fr'     => 'required|string|max:100',
-                'car_model_id' => 'required|exists:car_models,id',
-                'name' => 'required|string|max:100|unique:sub_models,name,' . $subModel->id,
->>>>>>> 2bdbe6e (first commit)
             ]);
 
             if ($validator->fails()) {
                 return back()->with('t-validation', $validator->errors()->all())->withInput();
             }
 
-<<<<<<< HEAD
             // 1. Main SubModel table update
             $subModel->update($request->only(['car_model_id', 'name']));
 
@@ -151,17 +136,6 @@ class SubModelController extends Controller
             return redirect()->route($this->routeName . 'index')
                 ->with('success', 'SubModel updated successfully.');
 
-=======
-            $subModel->update($request->only(['car_model_id', 'name']));
-
-            $subModel->translations()->create([
-                'language' => 'fr', 
-                'name'     => $request->name_fr,
-            ]);
-
-            return redirect()->route($this->routeName . 'index')
-                ->with('success', 'SubModel updated successfully.');
->>>>>>> 2bdbe6e (first commit)
         } catch (Exception $e) {
             return redirect()->route($this->routeName . 'index')
                 ->with('error', 'SubModel update failed.');

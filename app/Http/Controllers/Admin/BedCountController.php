@@ -81,17 +81,10 @@ class BedCountController extends Controller
     // Show edit form
     public function edit($id): View
     {
-<<<<<<< HEAD
         // with('translations') oboshoy add korun
         $bedCount = BedCount::with('translations')->findOrFail($id);
         return view($this->viewPath . 'edit', compact('bedCount'));
     }
-=======
-        $bedCount = BedCount::findOrFail($id);
-        return view($this->viewPath . 'edit', compact('bedCount'));
-    }
-
->>>>>>> 2bdbe6e (first commit)
     // Update bed count
     public function update(Request $request, $id): RedirectResponse
     {

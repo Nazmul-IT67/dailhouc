@@ -13,10 +13,7 @@ return new class () extends Migration {
         Schema::create('user_search_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-<<<<<<< HEAD
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
-=======
->>>>>>> 2bdbe6e (first commit)
             $table->json('filters'); 
             $table->integer('results_count')->default(0); 
             $table->string('ip_address')->nullable(); 

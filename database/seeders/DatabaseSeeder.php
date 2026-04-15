@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
             InteriorColorSeeder::class,
             VehicleReferenceSeeder::class,
             BedTypeAndCountSeeder::class,
-<<<<<<< HEAD
             BodyTypeSeeder::class,
             FuelSeeder::class,
             EquipmentSeeder::class,
@@ -42,9 +41,6 @@ class DatabaseSeeder extends Seeder
             SellerTypeSeeder::class,
             VehicleSeeder::class,
             ModelYearSeeder::class,
-=======
-            VehicleSeeder::class,
->>>>>>> 2bdbe6e (first commit)
         ]);
 
         User::factory()->create([

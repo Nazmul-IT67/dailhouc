@@ -2,15 +2,9 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-=======
-use App\Models\InteriorColor;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
->>>>>>> 2bdbe6e (first commit)
 
 class InteriorColorSeeder extends Seeder
 {
@@ -19,7 +13,6 @@ class InteriorColorSeeder extends Seeder
      */
     public function run(): void
     {
-<<<<<<< HEAD
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('interior_colors')->truncate();
         
@@ -54,19 +47,3 @@ class InteriorColorSeeder extends Seeder
         }
     }
 }
-=======
-        $colors = [
-            ['name' => 'Black', 'color_code' => '#000000'],
-            ['name' => 'Beige', 'color_code' => '#F5F5DC'],
-            ['name' => 'Brown', 'color_code' => '#A52A2A'],
-            ['name' => 'Gray', 'color_code' => '#808080'],
-            ['name' => 'Red', 'color_code' => '#FF0000'],
-            ['name' => 'White', 'color_code' => '#FFFFFF'],
-        ];
-
-        foreach ($colors as $color) {
-            InteriorColor::create($color);
-        }
-    }
-}
->>>>>>> 2bdbe6e (first commit)

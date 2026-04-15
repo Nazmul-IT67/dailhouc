@@ -131,11 +131,7 @@
                 {{-- Vehicle --}}
                 <li class="sidebar-list">
                     <i class="fa fa-thumb-tack"></i>
-<<<<<<< HEAD
                     <a class="sidebar-link sidebar-title {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.car_models.*') || request()->routeIs('admin.sub_models.*') || request()->routeIs('admin.fuels.*') || request()->routeIs('admin.equipment.*') || request()->routeIs('admin.body_types.*') || request()->routeIs('admin.powers.*') || request()->routeIs('admin.equipment_lines.*') || request()->routeIs('admin.model_years.*') || request()->routeIs('admin.seller_types.*') ? 'active' : '' }}"
-=======
-                    <a class="sidebar-link sidebar-title {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.car_models.*') || request()->routeIs('admin.sub_models.*') || request()->routeIs('admin.fuels.*') || request()->routeIs('admin.equipment.*') || request()->routeIs('admin.body_types.*') || request()->routeIs('admin.powers.*') || request()->routeIs('admin.equipment_lines.*') || request()->routeIs('admin.seller_types.*') ? 'active' : '' }}"
->>>>>>> 2bdbe6e (first commit)
                         href="#">
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -148,11 +144,7 @@
                     </a>
 
                     <ul
-<<<<<<< HEAD
                         class="sidebar-submenu {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.car_models.*') || request()->routeIs('admin.sub_models.*') || request()->routeIs('admin.fuels.*') || request()->routeIs('admin.equipment.*') || request()->routeIs('admin.body_types.*') || request()->routeIs('admin.powers.*') || request()->routeIs('admin.equipment_lines.*') || request()->routeIs('admin.model_years.*') || request()->routeIs('admin.seller_types.*') ? 'd-block' : '' }}">
-=======
-                        class="sidebar-submenu {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.car_models.*') || request()->routeIs('admin.sub_models.*') || request()->routeIs('admin.fuels.*') || request()->routeIs('admin.equipment.*') || request()->routeIs('admin.body_types.*') || request()->routeIs('admin.powers.*') || request()->routeIs('admin.equipment_lines.*') || request()->routeIs('admin.seller_types.*') ? 'd-block' : '' }}">
->>>>>>> 2bdbe6e (first commit)
                         <li>
                             <a class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
                                 href="{{ route('admin.categories.index') }}">
@@ -213,15 +205,12 @@
                                 Seller Types
                             </a>
                         </li>
-<<<<<<< HEAD
                         <li>
                             <a class="{{ request()->routeIs('admin.model_years.*') ? 'active' : '' }}"
                                 href="{{ route('admin.model_years.index') }}">
                                 Model Years
                             </a>
                         </li>
-=======
->>>>>>> 2bdbe6e (first commit)
                     </ul>
                 </li>
                 {{-- Vehicle --}}

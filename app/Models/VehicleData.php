@@ -26,15 +26,11 @@ class VehicleData extends Model
     {
         return $this->belongsTo(BodyColor::class, 'body_color_id');
     }
-<<<<<<< HEAD
     public function translations()
     {
         // Check korun apnar translation model-er nam 'BedTypeTranslation' kina
         return $this->hasMany(BedTypeTranslations::class, 'bed_type_id');
     }
-=======
-
->>>>>>> 2bdbe6e (first commit)
     public function upholstery()
     {
         return $this->belongsTo(Upholstery::class, 'upholstery_id');
@@ -66,7 +62,6 @@ class VehicleData extends Model
 
     public function getBedTypesAttribute()
     {
-<<<<<<< HEAD
         // Jodi controller theke manually 'bed_types' set kora hoy, tobe shetai return korbe
         if (isset($this->attributes['bed_types'])) {
             return is_string($this->attributes['bed_types'])
@@ -85,9 +80,5 @@ class VehicleData extends Model
     public function vehicle()
     {
         return $this->belongsTo(Vehicle::class, 'vehicle_id');
-=======
-        if (!$this->bed_type_id) return [];
-        return BedType::whereIn('id', $this->bed_type_id)->pluck('name'); // returns array of names
->>>>>>> 2bdbe6e (first commit)
     }
 }

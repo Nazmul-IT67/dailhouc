@@ -25,12 +25,9 @@ class Fuel extends Model
         }
         return $value; 
     }
-<<<<<<< HEAD
 
     public function vehicles()
     {
         return $this->hasMany(Vehicle::class, 'fuel_id'); 
     }
-=======
->>>>>>> 2bdbe6e (first commit)
 }

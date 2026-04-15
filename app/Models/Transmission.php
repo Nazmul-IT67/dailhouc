@@ -25,12 +25,9 @@ class Transmission extends Model
         }
         return $value; 
     }
-<<<<<<< HEAD
 
     public function vehicles()
     {
         return $this->hasMany(Vehicle::class, 'transmission_id');
     }
-=======
->>>>>>> 2bdbe6e (first commit)
 }

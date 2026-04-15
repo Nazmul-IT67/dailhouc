@@ -1450,7 +1450,6 @@
         },
         {
             "name": "google/cloud-core",
-<<<<<<< HEAD
             "version": "v1.71.0",
             "source": {
                 "type": "git",
@@ -1461,18 +1460,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/e1696b2e27390078d78bd335d6cc6b7b2c32a7dd",
                 "reference": "e1696b2e27390078d78bd335d6cc6b7b2c32a7dd",
-=======
-            "version": "v1.69.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/googleapis/google-cloud-php-core.git",
-                "reference": "a35bcf9d79f7007eaaf325e00011d08f40494fb1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/a35bcf9d79f7007eaaf325e00011d08f40494fb1",
-                "reference": "a35bcf9d79f7007eaaf325e00011d08f40494fb1",
->>>>>>> 2bdbe6e (first commit)
                 "shasum": ""
             },
             "require": {
@@ -1492,11 +1479,7 @@
                 "nikic/php-parser": "^5.6",
                 "opis/closure": "^3.7|^4.0",
                 "phpdocumentor/reflection": "^6.0",
-<<<<<<< HEAD
                 "phpdocumentor/reflection-docblock": "^5.3.3||^6.0",
-=======
-                "phpdocumentor/reflection-docblock": "^5.3",
->>>>>>> 2bdbe6e (first commit)
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "2.*"
@@ -1528,7 +1511,6 @@
             ],
             "description": "Google Cloud PHP shared dependency, providing functionality useful to all components.",
             "support": {
-<<<<<<< HEAD
                 "source": "https://github.com/googleapis/google-cloud-php-core/tree/v1.71.0"
             },
             "time": "2026-01-16T19:46:18+00:00"
@@ -1545,24 +1527,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/67b430f2ef164276e841ebfff8e3aa174576bd7f",
                 "reference": "67b430f2ef164276e841ebfff8e3aa174576bd7f",
-=======
-                "source": "https://github.com/googleapis/google-cloud-php-core/tree/v1.69.0"
-            },
-            "time": "2025-12-06T04:51:04+00:00"
-        },
-        {
-            "name": "google/cloud-storage",
-            "version": "v1.49.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/googleapis/google-cloud-php-storage.git",
-                "reference": "30aefa19ce5af165cef8bb39c224cfa865461541"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/30aefa19ce5af165cef8bb39c224cfa865461541",
-                "reference": "30aefa19ce5af165cef8bb39c224cfa865461541",
->>>>>>> 2bdbe6e (first commit)
                 "shasum": ""
             },
             "require": {
@@ -1574,11 +1538,7 @@
                 "erusev/parsedown": "^1.6",
                 "google/cloud-pubsub": "^2.0",
                 "phpdocumentor/reflection": "^5.3.3||^6.0",
-<<<<<<< HEAD
                 "phpdocumentor/reflection-docblock": "^5.3.3||^6.0",
-=======
-                "phpdocumentor/reflection-docblock": "^5.3",
->>>>>>> 2bdbe6e (first commit)
                 "phpseclib/phpseclib": "^2.0||^3.0",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.0",
@@ -1608,15 +1568,9 @@
             ],
             "description": "Cloud Storage Client for PHP",
             "support": {
-<<<<<<< HEAD
                 "source": "https://github.com/googleapis/google-cloud-php-storage/tree/v1.49.1"
             },
             "time": "2026-01-16T19:46:18+00:00"
-=======
-                "source": "https://github.com/googleapis/google-cloud-php-storage/tree/v1.49.0"
-            },
-            "time": "2025-12-06T04:51:04+00:00"
->>>>>>> 2bdbe6e (first commit)
         },
         {
             "name": "google/common-protos",
@@ -1679,7 +1633,6 @@
         },
         {
             "name": "google/gax",
-<<<<<<< HEAD
             "version": "v1.40.1",
             "source": {
                 "type": "git",
@@ -1690,18 +1643,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/googleapis/gax-php/zipball/80527b9779c3277c31c74d2fb7ff1ca990239163",
                 "reference": "80527b9779c3277c31c74d2fb7ff1ca990239163",
-=======
-            "version": "v1.40.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/googleapis/gax-php.git",
-                "reference": "1d3834d60b3f0794427c64d2b27d7c627fbba92c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/gax-php/zipball/1d3834d60b3f0794427c64d2b27d7c627fbba92c",
-                "reference": "1d3834d60b3f0794427c64d2b27d7c627fbba92c",
->>>>>>> 2bdbe6e (first commit)
                 "shasum": ""
             },
             "require": {
@@ -1743,15 +1684,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/gax-php/issues",
-<<<<<<< HEAD
                 "source": "https://github.com/googleapis/gax-php/tree/v1.40.1"
             },
             "time": "2026-01-16T19:54:08+00:00"
-=======
-                "source": "https://github.com/googleapis/gax-php/tree/v1.40.0"
-            },
-            "time": "2025-12-04T18:45:15+00:00"
->>>>>>> 2bdbe6e (first commit)
         },
         {
             "name": "google/grpc-gcp",
@@ -2881,7 +2816,6 @@
         },
         {
             "name": "laravel/prompts",
-<<<<<<< HEAD
             "version": "v0.3.10",
             "source": {
                 "type": "git",
@@ -2892,18 +2826,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/prompts/zipball/360ba095ef9f51017473505191fbd4ab73e1cab3",
                 "reference": "360ba095ef9f51017473505191fbd4ab73e1cab3",
-=======
-            "version": "v0.3.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/prompts.git",
-                "reference": "5c41bf0555b7cfefaad4e66d3046675829581ac4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/5c41bf0555b7cfefaad4e66d3046675829581ac4",
-                "reference": "5c41bf0555b7cfefaad4e66d3046675829581ac4",
->>>>>>> 2bdbe6e (first commit)
                 "shasum": ""
             },
             "require": {
@@ -2947,15 +2869,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-<<<<<<< HEAD
                 "source": "https://github.com/laravel/prompts/tree/v0.3.10"
             },
             "time": "2026-01-13T20:29:29+00:00"
-=======
-                "source": "https://github.com/laravel/prompts/tree/v0.3.9"
-            },
-            "time": "2026-01-07T21:00:29+00:00"
->>>>>>> 2bdbe6e (first commit)
         },
         {
             "name": "laravel/reverb",
@@ -3681,7 +3597,6 @@
         },
         {
             "name": "league/uri",
-<<<<<<< HEAD
             "version": "7.8.0",
             "source": {
                 "type": "git",
@@ -3696,22 +3611,6 @@
             },
             "require": {
                 "league/uri-interfaces": "^7.8",
-=======
-            "version": "7.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/uri.git",
-                "reference": "8d587cddee53490f9b82bf203d3a9aa7ea4f9807"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri/zipball/8d587cddee53490f9b82bf203d3a9aa7ea4f9807",
-                "reference": "8d587cddee53490f9b82bf203d3a9aa7ea4f9807",
-                "shasum": ""
-            },
-            "require": {
-                "league/uri-interfaces": "^7.7",
->>>>>>> 2bdbe6e (first commit)
                 "php": "^8.1",
                 "psr/http-factory": "^1"
             },
@@ -3725,19 +3624,11 @@
                 "ext-gmp": "to improve IPV4 host parsing",
                 "ext-intl": "to handle IDN host with the best performance",
                 "ext-uri": "to use the PHP native URI class",
-<<<<<<< HEAD
                 "jeremykendall/php-domain-parser": "to further parse the URI host and resolve its Public Suffix and Top Level Domain",
                 "league/uri-components": "to provide additional tools to manipulate URI objects components",
                 "league/uri-polyfill": "to backport the PHP URI extension for older versions of PHP",
                 "php-64bit": "to improve IPV4 host parsing",
                 "rowbot/url": "to handle URLs using the WHATWG URL Living Standard specification",
-=======
-                "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
-                "league/uri-components": "Needed to easily manipulate URI objects components",
-                "league/uri-polyfill": "Needed to backport the PHP URI extension for older versions of PHP",
-                "php-64bit": "to improve IPV4 host parsing",
-                "rowbot/url": "to handle WHATWG URL",
->>>>>>> 2bdbe6e (first commit)
                 "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
             },
             "type": "library",
@@ -3792,11 +3683,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-<<<<<<< HEAD
                 "source": "https://github.com/thephpleague/uri/tree/7.8.0"
-=======
-                "source": "https://github.com/thephpleague/uri/tree/7.7.0"
->>>>>>> 2bdbe6e (first commit)
             },
             "funding": [
                 {
@@ -3804,7 +3691,6 @@
                     "type": "github"
                 }
             ],
-<<<<<<< HEAD
             "time": "2026-01-14T17:24:56+00:00"
         },
         {
@@ -3819,22 +3705,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/c5c5cd056110fc8afaba29fa6b72a43ced42acd4",
                 "reference": "c5c5cd056110fc8afaba29fa6b72a43ced42acd4",
-=======
-            "time": "2025-12-07T16:02:06+00:00"
-        },
-        {
-            "name": "league/uri-interfaces",
-            "version": "7.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/uri-interfaces.git",
-                "reference": "62ccc1a0435e1c54e10ee6022df28d6c04c2946c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/62ccc1a0435e1c54e10ee6022df28d6c04c2946c",
-                "reference": "62ccc1a0435e1c54e10ee6022df28d6c04c2946c",
->>>>>>> 2bdbe6e (first commit)
                 "shasum": ""
             },
             "require": {
@@ -3847,11 +3717,7 @@
                 "ext-gmp": "to improve IPV4 host parsing",
                 "ext-intl": "to handle IDN host with the best performance",
                 "php-64bit": "to improve IPV4 host parsing",
-<<<<<<< HEAD
                 "rowbot/url": "to handle URLs using the WHATWG URL Living Standard specification",
-=======
-                "rowbot/url": "to handle WHATWG URL",
->>>>>>> 2bdbe6e (first commit)
                 "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
             },
             "type": "library",
@@ -3901,11 +3767,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-<<<<<<< HEAD
                 "source": "https://github.com/thephpleague/uri-interfaces/tree/7.8.0"
-=======
-                "source": "https://github.com/thephpleague/uri-interfaces/tree/7.7.0"
->>>>>>> 2bdbe6e (first commit)
             },
             "funding": [
                 {
@@ -3913,11 +3775,7 @@
                     "type": "github"
                 }
             ],
-<<<<<<< HEAD
             "time": "2026-01-15T06:54:53+00:00"
-=======
-            "time": "2025-12-07T16:03:21+00:00"
->>>>>>> 2bdbe6e (first commit)
         },
         {
             "name": "masterminds/html5",

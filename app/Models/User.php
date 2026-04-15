@@ -58,18 +58,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(City::class, 'city_id', 'id');
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 2bdbe6e (first commit)
     public function favoriteVehicles()
     {
         return $this->belongsToMany(Vehicle::class, 'favorite_vehicles');
     }
-<<<<<<< HEAD
     
-=======
->>>>>>> 2bdbe6e (first commit)
     public function firebaseTokens(): HasMany
     {
         return $this->hasMany(\App\Models\FirebaseToken::class);

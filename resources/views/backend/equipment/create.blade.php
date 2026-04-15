@@ -38,7 +38,6 @@
                                 @enderror
                             </div>
 
-<<<<<<< HEAD
                             <div class="mb-3">
                                 <label for="title_fr" class="form-label fw-bold">Equipment Title (French)</label>
                                 <input type="text" name="title_fr" id="title_fr"
@@ -48,8 +47,6 @@
                                     <span class="text-danger small">{{ $message }}</span>
                                 @enderror
                             </div>
-=======
->>>>>>> 2bdbe6e (first commit)
                             <button type="submit" class="btn btn-success">
                                 <i class="fa fa-save"></i> Save Equipment
                             </button>

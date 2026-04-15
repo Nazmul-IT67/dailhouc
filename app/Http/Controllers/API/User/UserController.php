@@ -22,7 +22,6 @@ class UserController extends Controller
         }
         return $this->success($user, 'User Data fetch Successful!', 200);
     }
-
     public function updateUser(Request $request)
     {
         $user = Auth::user();

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-<<<<<<< HEAD
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -79,49 +78,3 @@ class SubModelSeeder extends Seeder
         }
     }
 }
-=======
-use App\Models\CarModel;
-use App\Models\SubModel;
-
-class SubModelSeeder extends Seeder
-{
-    public function run(): void
-    {
-        $carModels = CarModel::pluck('id', 'name');
-
-        $subModels = [
-            // Honda
-            ['name' => 'CBR 1000RR SP', 'car_model_name' => 'CBR 1000RR'],
-            ['name' => 'CBR 500R', 'car_model_name' => 'CBR 1000RR'],
-            ['name' => 'CB 500F Deluxe', 'car_model_name' => 'CB 500F'],
-
-            // Yamaha
-            ['name' => 'YZF-R1M', 'car_model_name' => 'YZF-R1'],
-            ['name' => 'MT-07 ABS', 'car_model_name' => 'MT-07'],
-
-            // BMW
-            ['name' => 'X5 M', 'car_model_name' => 'X5'],
-            ['name' => 'X5 xDrive', 'car_model_name' => 'X5'],
-            ['name' => 'M3 Competition', 'car_model_name' => 'M3'],
-
-            // Toyota
-            ['name' => 'Corolla Altis', 'car_model_name' => 'Corolla'],
-            ['name' => 'Corolla Cross', 'car_model_name' => 'Corolla'],
-            ['name' => 'Camry Hybrid', 'car_model_name' => 'Camry'],
-
-            // Tesla
-            ['name' => 'Model S Plaid', 'car_model_name' => 'Model S'],
-            ['name' => 'Model 3 Performance', 'car_model_name' => 'Model 3'],
-        ];
-
-        foreach ($subModels as $sub) {
-            if (isset($carModels[$sub['car_model_name']])) {
-                SubModel::create([
-                    'name' => $sub['name'],
-                    'car_model_id' => $carModels[$sub['car_model_name']],
-                ]);
-            }
-        }
-    }
-}
->>>>>>> 2bdbe6e (first commit)

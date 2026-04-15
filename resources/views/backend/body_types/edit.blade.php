@@ -45,17 +45,10 @@
                             <div class="mb-3">
                                 <label for="title_fr" class="form-label">Body Type title (Fr) </label>
                                 <input type="text" name="title_fr" id="title_fr"
-<<<<<<< HEAD
                                     class="form-control @error('title_fr') is-invalid @enderror" {{-- .name er bodole .title hobe --}}
                                     value="{{ old('title_fr', $bodyType->translations->where('language', 'fr')->first()->title ?? '') }}"
                                     placeholder="Enter brand name in French" required>
 
-=======
-                                    class="form-control @error('title_fr') is-invalid @enderror"
-                                    value="{{ old('title_fr', $bodyType->translations->where('language', 'fr')->first()->name ?? '') }}" 
-                                    placeholder="Enter brand name in French" required>
-                                
->>>>>>> 2bdbe6e (first commit)
                                 @error('title_fr')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
